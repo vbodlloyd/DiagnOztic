@@ -36,7 +36,7 @@ public class OpenGLES20Activity extends Activity {
         setContentView(mGLView);
         trameDecoder = new TrameDecoder();
         memoryBuffer = new MemoryBuffer();
-		readSocketThread = new ReadSocketThread(memoryBuffer);
+		readSocketThread = new ReadSocketThread(memoryBuffer,Config.PORT_LIDAR);
 		readSocketThread.start();
 		handler.postDelayed(runnable, 10);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

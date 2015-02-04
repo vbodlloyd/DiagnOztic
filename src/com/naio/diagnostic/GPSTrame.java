@@ -68,15 +68,15 @@ public class GPSTrame extends Trame {
 	/**
 	 * @return the lat
 	 */
-	public byte[] getLat() {
-		return lat;
+	public double getLat() {
+		return ByteBuffer.wrap(lat).getDouble(0);
 	}
 
 	/**
 	 * @return the lon
 	 */
-	public byte[] getLon() {
-		return lon;
+	public double getLon() {
+		return ByteBuffer.wrap(lon).getDouble(0);
 	}
 
 	/**

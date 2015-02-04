@@ -48,6 +48,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 	private final float[] mRotationMatrix = new float[16];
 
 	private float mAngle;
+	private Line mLine;
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -57,6 +58,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 		mTriangle = new Triangle();
 		mSquare = new Square();
+		mLine = new Line();
 		for (int i = 0; i < 180; i++) {
 			position[i] = new UInt16(0);
 		}
@@ -83,17 +85,34 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 		Matrix.rotateM(mMVPMatrix, 0, 181, 0, 0, 1);
 		// Draw square
+		float previousDot = 0.0f;
+		int previousAngle = 0;
+		float[] positionxy[] = new float[180][2];
 		for (int i = 0; i < 180; i++) {
 			Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
-			float dep = (float) (position[i].floatValue() / 1000.0f) * 20.0f;
-			if (position[i].floatValue() < 2000) {
-				Log.e("points", "" + position[i].floatValue());
+			if (position[i].floatValue() < 4000) {
+				float dep = (float) (position[i].floatValue() / 1000.0f) * 20.0f;
+				Matrix.translateM(mMVPMatrix, 0, dep, 0, 0);
+				Matrix.scaleM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f);
+				mSquare.draw(mMVPMatrix);
+				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
+				Matrix.translateM(mMVPMatrix, 0, -1.0f * dep, 0, 0);
+				positionxy[i][0] = (float) (dep * Math.cos(180-i));
+				positionxy[i][1] = (float) (dep * Math.sin(180-i));
 			}
-			Matrix.translateM(mMVPMatrix, 0, dep, 0, 0);
-			Matrix.scaleM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f);
-			mSquare.draw(mMVPMatrix);
-			Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
-			Matrix.translateM(mMVPMatrix, 0, -1.0f * dep, 0, 0);
+			String txt = "";
+			float x = 0.0f;
+			float y = 0.0f;
+			for (float[] fl : positionxy) {
+				if (fl[0] != 0.0f && fl[1] != 0.0f) {
+					if (x != 0.0f) {
+					}
+					x= fl[0];
+					y=fl[1];
+					txt += "\nx" + fl[0] + " y" + fl[1];
+				}
+			}
+			Log.e("positiondd", "" + txt);
 		}
 
 	}

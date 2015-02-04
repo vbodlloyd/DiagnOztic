@@ -5,7 +5,7 @@ public class Config {
 	static final String HOST = "192.168.1.111";
 
 	static final int PORT_GPS = 3334;
-	static final int PORT_LIDAR = 3337;
+	static final int PORT_LIDAR = 7777;//3337
 	static final int PORT_MOTORS = 3331;
 	static final int PORT_REMOTE = 3338;
 	static final int PORT_TEST = 4444;

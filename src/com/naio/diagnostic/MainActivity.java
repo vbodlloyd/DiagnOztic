@@ -190,7 +190,7 @@ public class MainActivity extends Activity {
 		 * socketThread.start();
 		 */
 		memoryBuffer = new MemoryBuffer();
-		readSocketThread = new ReadSocketThread(memoryBuffer);
+		readSocketThread = new ReadSocketThread(memoryBuffer,Config.PORT_GPS);
 		readSocketThread.start();
 		handler.postDelayed(runnable, 10);
 

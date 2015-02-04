@@ -22,9 +22,10 @@ public class ReadSocketThread extends Thread {
 	private int memory;
 	public ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 	private MemoryBuffer memoryBuffer;
+	private int port;
 
-	public ReadSocketThread(MemoryBuffer memoryBuffer) {
-
+	public ReadSocketThread(MemoryBuffer memoryBuffer,int port) {
+		this.port = port;
 		this.memoryBuffer = memoryBuffer;
 		queue = new ConcurrentLinkedQueue<String>();
 		this.stop = true;
@@ -35,7 +36,7 @@ public class ReadSocketThread extends Thread {
 		String message = "";
 		int charsRead = 0;
 		byte[] buffer = new byte[Config.BUFFER_SIZE];
-		netClient = new NetClient(Config.HOST, Config.PORT_LIDAR, "0");
+		netClient = new NetClient(Config.HOST, port, "0");
 		netClient.connectWithServer();
 		try {
 			while (this.stop) {
