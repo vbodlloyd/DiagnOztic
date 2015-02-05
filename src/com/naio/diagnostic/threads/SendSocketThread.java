@@ -12,15 +12,11 @@ public class SendSocketThread extends Thread {
 	private final Object lock1 = new Object();
 	private final Object lock2 = new Object();
 	private byte[] bytes;
-	private int memory;
-	private MemoryBuffer memoryBuffer;
 	private NetClient netClient;
 
 	public SendSocketThread(byte[] bytes) {
 		this.bytes = bytes;
-
 		this.stop = true;
-
 	}
 
 	public SendSocketThread() {

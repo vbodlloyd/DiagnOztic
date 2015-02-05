@@ -1,4 +1,4 @@
-package com.naio.diagnostic.activities;
+package com.naio.diagnostic.opengl;
 
 import com.naio.diagnostic.R;
 import com.naio.diagnostic.threads.ReadSocketThread;
@@ -27,16 +27,11 @@ import android.widget.TextView;
 public class OpenGLES20Fragment extends Fragment {
 
 	private GLSurfaceView mGLView;
-	private MemoryBuffer memoryBuffer;
-	private ReadSocketThread readSocketThread;
-	
-	private TrameDecoder trameDecoder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        mGLView = new MyGLSurfaceView(this.getActivity()); //I believe you may also use getActivity().getApplicationContext();
-        
+        mGLView = new MyGLSurfaceView(this.getActivity()); 
         return mGLView;
     }
 	/**

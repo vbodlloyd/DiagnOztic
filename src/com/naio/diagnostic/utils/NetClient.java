@@ -76,29 +76,4 @@ public class NetClient {
         }
     }
 
-   /*public void sendDataWithString(String message) {
-        if (message != null) {
-            connectWithServer();
-            out.write(message);
-            out.flush();
-        }
-    }*/
-
-   /* public String receiveDataFromServer() {
-    	
-        try {
-            String message = "";
-            int charsRead = 0;
-            char[] buffer = new char[BUFFER_SIZE];
-
-            while ((charsRead = in.read(buffer)) != -1) {
-                message += new String(buffer).substring(0, charsRead);
-            }
-            return message;
-        } catch (IOException e) {
-            return "Error receiving response:  " + e.getMessage();
-        }
-    }*/
-
-
 }

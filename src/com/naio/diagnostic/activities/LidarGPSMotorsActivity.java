@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.naio.diagnostic.R;
+import com.naio.diagnostic.opengl.OpenGLES20Fragment;
 import com.naio.diagnostic.threads.ReadSocketThread;
 import com.naio.diagnostic.threads.SendSocketThread;
 import com.naio.diagnostic.trames.GPSTrame;
@@ -40,29 +41,29 @@ import android.view.WindowManager;
 public class LidarGPSMotorsActivity extends FragmentActivity {
 	private OpenGLES20Fragment openglfragment;
 	private TrameDecoder trameDecoder;
-	private MemoryBuffer memoryBuffer;
-	private ReadSocketThread readSocketThread;
+	private MemoryBuffer memoryBufferLidar;
+	private ReadSocketThread readSocketThreadLidar;
 	private Handler handler = new Handler();
-	private SendSocketThread sst;
+	private SendSocketThread sendSocketThreadMotors;
+	private GoogleMap map;
+	private ReadSocketThread readSocketThreadMap;
+	private MemoryBuffer memoryBufferMap;
+	private boolean firstTimeDisplayTheMap;
+	private List<LatLng> listPointMap;
 	Runnable runnable = new Runnable() {
 		public void run() {
 			read_the_queue();
 		}
 	};
-	private GoogleMap map;
-	private ReadSocketThread readSocketThreadMap;
-	private MemoryBuffer memoryBufferMap;
-	private boolean firstTime;
-	private List<LatLng> listPoint;
-	private Polyline polyline;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		Resources res = getResources();
 
-		getActionBar().setBackgroundDrawable(res.getDrawable(R.drawable.form));
+		// change the color of the action bar
+		getActionBar().setBackgroundDrawable(
+				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.lidar_gps_motors_activity);
 
 		getSupportFragmentManager().addOnBackStackChangedListener(
@@ -77,138 +78,48 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				});
 
 		if (savedInstanceState == null) {
+			trameDecoder = new TrameDecoder();
+			memoryBufferLidar = new MemoryBuffer();
+			memoryBufferMap = new MemoryBuffer();
+			listPointMap = new ArrayList<LatLng>();
+			firstTimeDisplayTheMap = true;
+			readSocketThreadMap = new ReadSocketThread(memoryBufferMap,
+					Config.PORT_GPS);
+			readSocketThreadLidar = new ReadSocketThread(memoryBufferLidar,
+					Config.PORT_LIDAR);
+			sendSocketThreadMotors = new SendSocketThread();
+
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+			// initialize the fragments
 			openglfragment = new OpenGLES20Fragment();
-			
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.list, openglfragment).addToBackStack(null)
 					.commit();
-			trameDecoder = new TrameDecoder();
-			memoryBuffer = new MemoryBuffer();
-			firstTime = true;
-			readSocketThread = new ReadSocketThread(memoryBuffer,
-					Config.PORT_LIDAR);
-			readSocketThread.start();
-			memoryBufferMap = new MemoryBuffer();
-			readSocketThreadMap = new ReadSocketThread(memoryBufferMap,
-					Config.PORT_GPS);
-			readSocketThreadMap.start();
-			listPoint = new ArrayList<LatLng>();
-			sst = new SendSocketThread();
-			sst.start();
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map_frag)).getMap();
+			set_the_analogueView();
+
+			// start the threads
+			readSocketThreadLidar.start();
+			readSocketThreadMap.start();
+			sendSocketThreadMotors.start();
+
 			handler.postDelayed(runnable, 10);
-			AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
-			analView.setOnMoveListener(new OnMoveListener() {
-
-				@Override
-				public void onMaxMoveInDirection(int padDiff, int padSpeed) {
-					int bearing = padDiff * 127 / 180;
-					byte xa = 0;
-					byte ya = 0;
-					if (padSpeed >= 0) {
-						if (padSpeed + bearing > 127)
-							xa = (byte) 127;
-						else {
-							if (padSpeed + bearing < -127)
-								xa = (byte) -127;
-							else
-								xa = (byte) (padSpeed + bearing);
-						}
-
-						if (padSpeed - bearing < -127)
-							ya = (byte) -127;
-						else {
-							if (padSpeed - bearing > 127)
-								ya = (byte) 127;
-							else
-								ya = (byte) (padSpeed - bearing);
-						}
-
-					} else {
-						if (padSpeed - bearing < -127)
-							xa = (byte) -127;
-						else {
-							if (padSpeed - bearing > 127)
-								xa = (byte) 127;
-							else
-								xa = (byte) (padSpeed - bearing);
-						}
-						if (padSpeed + bearing > 127)
-							ya = (byte) 127;
-						else {
-							if (padSpeed + bearing < -127)
-								ya = (byte) -127;
-							else
-								ya = (byte) (padSpeed + bearing);
-						}
-					}
-					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
-							2, xa, ya, 0, 0, 0, 0 };
-					sst.setBytes(b);
-				}
-
-				@Override
-				public void onHalfMoveInDirection(int padDiff, int padSpeed) {
-					int bearing = padDiff * 127 / 180;
-					byte xa = 0;
-					byte ya = 0;
-					if (padSpeed >= 0) {
-						if (padSpeed + bearing > 127)
-							xa = (byte) 127;
-						else {
-							if (padSpeed + bearing < -127)
-								xa = (byte) -127;
-							else
-								xa = (byte) (padSpeed + bearing);
-						}
-
-						if (padSpeed - bearing < -127)
-							ya = (byte) -127;
-						else {
-							if (padSpeed - bearing > 127)
-								ya = (byte) 127;
-							else
-								ya = (byte) (padSpeed - bearing);
-						}
-
-					} else {
-						if (padSpeed - bearing < -127)
-							xa = (byte) -127;
-						else {
-							if (padSpeed - bearing > 127)
-								xa = (byte) 127;
-							else
-								xa = (byte) (padSpeed - bearing);
-						}
-						if (padSpeed + bearing > 127)
-							ya = (byte) 127;
-						else {
-							if (padSpeed + bearing < -127)
-								ya = (byte) -127;
-							else
-								ya = (byte) (padSpeed + bearing);
-						}
-					}
-					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
-							2, xa, ya, 0, 0, 0, 0 };
-					sst.setBytes(b);
-
-				}
-			});
 		}
 	}
-@Override
-public void onBackPressed() {
-	super.onBackPressed();
-	readSocketThread.setStop(false);
-	readSocketThreadMap.setStop(false);
-	sst.setStop(false);
-}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		readSocketThreadLidar.setStop(false);
+		readSocketThreadMap.setStop(false);
+		sendSocketThreadMotors.setStop(false);
+	}
+
 	private void read_the_queue() {
-		LidarTrame lidar = (LidarTrame) trameDecoder.decode(memoryBuffer
+		LidarTrame lidar = (LidarTrame) trameDecoder.decode(memoryBufferLidar
 				.getPollFifo());
 		if (lidar != null) {
 			((MyGLSurfaceView) openglfragment.getView())
@@ -219,18 +130,15 @@ public void onBackPressed() {
 		if (gps != null) {
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
-			PolylineOptions option = new PolylineOptions().width(5).color(Color.BLUE).addAll(listPoint);
-			polyline = map.addPolyline(option);
-			listPoint.add(latlng);
+			PolylineOptions option = new PolylineOptions().width(5)
+					.color(Color.BLUE).addAll(listPointMap);
+			map.addPolyline(option);
+			listPointMap.add(latlng);
 			map.addMarker(new MarkerOptions().position(latlng).title("Oz"));
-			if (firstTime) {
+			if (firstTimeDisplayTheMap) {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
-				firstTime = false;
-				
+				firstTimeDisplayTheMap = false;
 			}
-			
-			// Zoom in, animating the camera.
-			// map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 		}
 		handler.postDelayed(runnable, 64);// 15FPS
 
@@ -253,5 +161,107 @@ public void onBackPressed() {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void set_the_analogueView() {
+		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
+		analView.setOnMoveListener(new OnMoveListener() {
+
+			@Override
+			public void onMaxMoveInDirection(int padDiff, int padSpeed) {
+				int bearing = padDiff * 127 / 180;
+				byte xa = 0;
+				byte ya = 0;
+				if (padSpeed >= 0) {
+					if (padSpeed + bearing > 127)
+						xa = (byte) 127;
+					else {
+						if (padSpeed + bearing < -127)
+							xa = (byte) -127;
+						else
+							xa = (byte) (padSpeed + bearing);
+					}
+
+					if (padSpeed - bearing < -127)
+						ya = (byte) -127;
+					else {
+						if (padSpeed - bearing > 127)
+							ya = (byte) 127;
+						else
+							ya = (byte) (padSpeed - bearing);
+					}
+
+				} else {
+					if (padSpeed - bearing < -127)
+						xa = (byte) -127;
+					else {
+						if (padSpeed - bearing > 127)
+							xa = (byte) 127;
+						else
+							xa = (byte) (padSpeed - bearing);
+					}
+					if (padSpeed + bearing > 127)
+						ya = (byte) 127;
+					else {
+						if (padSpeed + bearing < -127)
+							ya = (byte) -127;
+						else
+							ya = (byte) (padSpeed + bearing);
+					}
+				}
+				byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+						xa, ya, 0, 0, 0, 0 };
+				sendSocketThreadMotors.setBytes(b);
+			}
+
+			@Override
+			public void onHalfMoveInDirection(int padDiff, int padSpeed) {
+				int bearing = padDiff * 127 / 180;
+				byte xa = 0;
+				byte ya = 0;
+				if (padSpeed >= 0) {
+					if (padSpeed + bearing > 127)
+						xa = (byte) 127;
+					else {
+						if (padSpeed + bearing < -127)
+							xa = (byte) -127;
+						else
+							xa = (byte) (padSpeed + bearing);
+					}
+
+					if (padSpeed - bearing < -127)
+						ya = (byte) -127;
+					else {
+						if (padSpeed - bearing > 127)
+							ya = (byte) 127;
+						else
+							ya = (byte) (padSpeed - bearing);
+					}
+
+				} else {
+					if (padSpeed - bearing < -127)
+						xa = (byte) -127;
+					else {
+						if (padSpeed - bearing > 127)
+							xa = (byte) 127;
+						else
+							xa = (byte) (padSpeed - bearing);
+					}
+					if (padSpeed + bearing > 127)
+						ya = (byte) 127;
+					else {
+						if (padSpeed + bearing < -127)
+							ya = (byte) -127;
+						else
+							ya = (byte) (padSpeed + bearing);
+					}
+				}
+				byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+						xa, ya, 0, 0, 0, 0 };
+				sendSocketThreadMotors.setBytes(b);
+
+			}
+		});
+
 	}
 }

@@ -11,6 +11,7 @@ import android.view.View;
 
 public class AnalogueView extends View {
 
+	
     float x,y;
     double r,t;
     int cx, cy,w,h;

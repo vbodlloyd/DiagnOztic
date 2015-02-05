@@ -22,8 +22,6 @@ public class ReadSocketThread extends Thread {
 	private boolean stop;
 	private final Object lock1 = new Object();
 	private final Object lock2 = new Object();
-	private char[] bytes;
-	private int memory;
 	public ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 	private MemoryBuffer memoryBuffer;
 	private int port;
@@ -33,11 +31,9 @@ public class ReadSocketThread extends Thread {
 		this.memoryBuffer = memoryBuffer;
 		queue = new ConcurrentLinkedQueue<String>();
 		this.stop = true;
-		memory = 0;
 	}
 
 	public void run() {
-		String message = "";
 		int charsRead = 0;
 		byte[] buffer = new byte[Config.BUFFER_SIZE];
 		netClient = new NetClient(Config.HOST, port, "0");

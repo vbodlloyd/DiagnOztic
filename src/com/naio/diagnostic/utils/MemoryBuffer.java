@@ -6,13 +6,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.util.Log;
 
-public class MemoryBuffer {
-
+/**
+ * Garde en mémoire la fin d'une trame non fini et la complete avec la suivante.
+ * La classe contient une fifo contennant ces trames.
+ * 
+ * @author bodereau
+ *
+ */
+public class MemoryBuffer { 
 	public ConcurrentLinkedQueue<byte[]> fifo = new ConcurrentLinkedQueue<byte[]>();
 
 	private byte[] memoryBytes = new byte []{};
-
-	private int size = 0;
 
 	public void addToFifo(byte[] bytess, int bytesRead) {
 		byte[] bytes =bytess.clone();
