@@ -6,10 +6,32 @@
     tools:context="com.naio.diagnostic.activities.LidarGPSMotorsActivity" >
 
     <FrameLayout
-        android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1" >
+
+        <FrameLayout
+            android:id="@+id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        
+         <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Lidar Oz"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="2dp"
+                android:text="Lidar Oz"
+                android:textColor="@android:color/background_light"
+                android:textSize="30dp" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -17,12 +39,34 @@
         android:layout_weight="2"
         android:orientation="vertical" >
 
-        <fragment
-            android:id="@+id/map_frag"
+        <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            class="com.google.android.gms.maps.MapFragment" />
+            android:layout_weight="1" >
+
+            <fragment
+                android:id="@+id/map_frag"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                class="com.google.android.gms.maps.MapFragment" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Position Oz"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="2dp"
+                android:text="Position Oz"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30dp" />
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="fill_parent"
@@ -34,6 +78,23 @@
                 android:layout_width="400px"
                 android:layout_height="400px"
                 android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Contrôleur Oz"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="2dp"
+                android:text="Contrôleur Oz"
+                android:textColor="@android:color/background_dark"
+                android:textSize="30dp" />
         </FrameLayout>
     </LinearLayout>
 
