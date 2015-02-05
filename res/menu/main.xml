@@ -1,6 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.naio.diagnostic.MainActivity" >
+    tools:context="com.naio.diagnostic.MainActivity" 
+    >
 
     <item
         android:id="@+id/action_settings"

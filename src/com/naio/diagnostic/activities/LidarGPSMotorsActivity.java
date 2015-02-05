@@ -1,10 +1,16 @@
 package com.naio.diagnostic.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.naio.diagnostic.R;
 import com.naio.diagnostic.threads.ReadSocketThread;
 import com.naio.diagnostic.threads.SendSocketThread;
@@ -18,6 +24,10 @@ import com.naio.diagnostic.utils.AnalogueView.OnMoveListener;
 import com.naio.opengl.MyGLSurfaceView;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -43,11 +53,16 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private ReadSocketThread readSocketThreadMap;
 	private MemoryBuffer memoryBufferMap;
 	private boolean firstTime;
+	private List<LatLng> listPoint;
+	private Polyline polyline;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		Resources res = getResources();
+
+		getActionBar().setBackgroundDrawable(res.getDrawable(R.drawable.form));
 		setContentView(R.layout.lidar_gps_motors_activity);
 
 		getSupportFragmentManager().addOnBackStackChangedListener(
@@ -65,6 +80,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			openglfragment = new OpenGLES20Fragment();
+			
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.list, openglfragment).addToBackStack(null)
 					.commit();
@@ -78,6 +94,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			readSocketThreadMap = new ReadSocketThread(memoryBufferMap,
 					Config.PORT_GPS);
 			readSocketThreadMap.start();
+			listPoint = new ArrayList<LatLng>();
 			sst = new SendSocketThread();
 			sst.start();
 			map = ((MapFragment) getFragmentManager().findFragmentById(
@@ -202,11 +219,16 @@ public void onBackPressed() {
 		if (gps != null) {
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
+			PolylineOptions option = new PolylineOptions().width(5).color(Color.BLUE).addAll(listPoint);
+			polyline = map.addPolyline(option);
+			listPoint.add(latlng);
 			map.addMarker(new MarkerOptions().position(latlng).title("Oz"));
 			if (firstTime) {
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
 				firstTime = false;
+				
 			}
+			
 			// Zoom in, animating the camera.
 			// map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 		}

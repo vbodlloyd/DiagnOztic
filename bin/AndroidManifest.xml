@@ -26,8 +26,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/logo_diagnostic"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.naio.diagnostic.activities.MainActivity"
