@@ -18,7 +18,7 @@ public class SendSocketThread extends Thread {
 
 	public SendSocketThread(byte[] bytes) {
 		this.bytes = bytes;
-		
+
 		this.stop = true;
 
 	}
@@ -42,7 +42,10 @@ public class SendSocketThread extends Thread {
 
 				try {
 					lock1.wait();
-					netClient.getOut().write(bytes);
+					if (netClient.getOut() != null) {
+						netClient.getOut().write(bytes);
+					}else
+						Thread.sleep(1,10);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -28,7 +28,7 @@ public class ReadSocketThread extends Thread {
 	private MemoryBuffer memoryBuffer;
 	private int port;
 
-	public ReadSocketThread(MemoryBuffer memoryBuffer,int port) {
+	public ReadSocketThread(MemoryBuffer memoryBuffer, int port) {
 		this.port = port;
 		this.memoryBuffer = memoryBuffer;
 		queue = new ConcurrentLinkedQueue<String>();
@@ -44,12 +44,20 @@ public class ReadSocketThread extends Thread {
 		netClient.connectWithServer();
 		try {
 			while (this.stop) {
-
-				if ((charsRead = netClient.getIn().read(buffer)) != -1) {
-					memoryBuffer.addToFifo(buffer, charsRead);
-				}else{
+				if (netClient.getIn() != null) {
+					if ((charsRead = netClient.getIn().read(buffer)) != -1) {
+						memoryBuffer.addToFifo(buffer, charsRead);
+					} else {
+						try {
+							Thread.sleep(0, 1);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				} else {
 					try {
-						Thread.sleep(0, 1);
+						Thread.sleep(1, 10);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

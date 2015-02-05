@@ -4,10 +4,10 @@ public class Config {
 
 	public static final String HOST = "192.168.1.111";
 
-	public static final int PORT_GPS = 3334;
-	public static final int PORT_LIDAR = 7777;//3337
-	public static final int PORT_MOTORS = 3331;
-	public static final int PORT_REMOTE = 3338;
+	public static final int PORT_GPS = 4334;
+	public static final int PORT_LIDAR = 4337;
+	public static final int PORT_MOTORS = 4331;
+	public static final int PORT_REMOTE = 4338;
 	public static final int PORT_TEST = 4444;
 
 	public static final int LENGHT_HEADER = 6;

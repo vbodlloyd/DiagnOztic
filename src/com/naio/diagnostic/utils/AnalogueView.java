@@ -14,7 +14,7 @@ public class AnalogueView extends View {
     float x,y;
     double r,t;
     int cx, cy,w,h;
-    final int RADIUS = 50;
+    final int RADIUS = 100;
     Paint black = new Paint();
     Paint grey = new Paint();
     Paint white = new Paint();
@@ -145,8 +145,8 @@ public class AnalogueView extends View {
         t = n2pT(e.getX(),e.getY());
         x = (float) p2nX();
         y =(float) p2nY();
-        float xb=x-100;
-        float yb=y-100;
+        float xb=(x/2)-100;
+        float yb=(y/2)-100;
         xb *=2.5;
         yb *=-2.5;
         

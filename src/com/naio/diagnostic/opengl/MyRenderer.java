@@ -101,10 +101,10 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 				mSquare.draw(mMVPMatrix);
 				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
 				Matrix.translateM(mMVPMatrix, 0, -1.0f * dep, 0, 0);
-				positionxy[i][0] = (float) (dep * Math.cos(180-i));
-				positionxy[i][1] = (float) (dep * Math.sin(180-i));
+			//	positionxy[i][0] = (float) (dep * Math.cos(180-i));
+			//	positionxy[i][1] = (float) (dep * Math.sin(180-i));
 			}
-			String txt = "";
+			/*String txt = "";
 			float x = 0.0f;
 			float y = 0.0f;
 			for (float[] fl : positionxy) {
@@ -115,8 +115,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 					y=fl[1];
 					txt += "\nx" + fl[0] + " y" + fl[1];
 				}
-			}
-			Log.e("positiondd", "" + txt);
+			}*/
 		}
 
 	}
