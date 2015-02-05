@@ -1,7 +1,11 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.opengl;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import com.naio.opengl.Line;
+import com.naio.opengl.Square;
+import com.naio.opengl.Triangle;
 
 import net.sourceforge.juint.UInt16;
 

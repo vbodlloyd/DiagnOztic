@@ -1,6 +1,16 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.activities;
 
-import com.naio.diagnostic.AnalogueView.OnMoveListener;
+import com.naio.diagnostic.R;
+import com.naio.diagnostic.R.id;
+import com.naio.diagnostic.R.layout;
+import com.naio.diagnostic.R.menu;
+import com.naio.diagnostic.threads.ReadSocketThread;
+import com.naio.diagnostic.threads.SendSocketThread;
+import com.naio.diagnostic.trames.TrameDecoder;
+import com.naio.diagnostic.utils.AnalogueView;
+import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.MemoryBuffer;
+import com.naio.diagnostic.utils.AnalogueView.OnMoveListener;
 
 import android.app.Activity;
 import android.os.Bundle;

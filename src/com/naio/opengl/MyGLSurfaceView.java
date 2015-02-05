@@ -1,4 +1,6 @@
-package com.naio.diagnostic;
+package com.naio.opengl;
+
+import com.naio.diagnostic.opengl.MyRenderer;
 
 import net.sourceforge.juint.UInt16;
 import android.content.Context;

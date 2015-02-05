@@ -1,6 +1,8 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.trames;
 
 import java.util.Arrays;
+
+import com.naio.diagnostic.utils.Config;
 
 import net.sourceforge.juint.UInt16;
 import net.sourceforge.juint.UInt8;

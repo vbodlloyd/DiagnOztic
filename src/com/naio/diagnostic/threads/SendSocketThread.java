@@ -1,6 +1,10 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.threads;
 
 import java.io.IOException;
+
+import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.MemoryBuffer;
+import com.naio.diagnostic.utils.NetClient;
 
 public class SendSocketThread extends Thread {
 

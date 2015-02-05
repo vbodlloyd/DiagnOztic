@@ -1,4 +1,4 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;

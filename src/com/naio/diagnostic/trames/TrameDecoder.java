@@ -1,4 +1,6 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.trames;
+
+import com.naio.diagnostic.utils.Config;
 
 public class TrameDecoder {
 

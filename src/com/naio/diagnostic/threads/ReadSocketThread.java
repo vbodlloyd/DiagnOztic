@@ -1,10 +1,14 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.threads;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.MemoryBuffer;
+import com.naio.diagnostic.utils.NetClient;
 
 import net.sourceforge.juint.UInt8;
 

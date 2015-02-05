@@ -1,4 +1,4 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.utils;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

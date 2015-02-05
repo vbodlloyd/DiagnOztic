@@ -1,7 +1,8 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.trames;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
+
 
 public class GPSTrame extends Trame {
 

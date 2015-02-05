@@ -1,4 +1,4 @@
-package com.naio.diagnostic;
+package com.naio.diagnostic.trames;
 
 public class Trame {
 	private byte[] naio01 = new byte[6];
