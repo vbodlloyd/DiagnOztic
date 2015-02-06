@@ -6,6 +6,6 @@
 	<classpathentry exported="true" kind="lib" path="/home/bodereau/Téléchargements/net.sourceforge.juint-1.0/net.sourceforge.juint-1.0.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/google-play-services_lib"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/google-play-services_lib"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

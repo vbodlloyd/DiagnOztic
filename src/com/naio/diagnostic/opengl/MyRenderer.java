@@ -89,8 +89,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 		Matrix.rotateM(mMVPMatrix, 0, 181, 0, 0, 1);
 		// Draw square
-		float previousDot = 0.0f;
-		int previousAngle = 0;
+
 		float[] positionxy[] = new float[180][2];
 		for (int i = 0; i < 180; i++) {
 			Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
@@ -101,21 +100,29 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 				mSquare.draw(mMVPMatrix);
 				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
 				Matrix.translateM(mMVPMatrix, 0, -1.0f * dep, 0, 0);
-			//	positionxy[i][0] = (float) (dep * Math.cos(180-i));
-			//	positionxy[i][1] = (float) (dep * Math.sin(180-i));
+				positionxy[i][0] = (float) (dep * Math.cos((180 - i) * Math.PI
+						/ 180));
+				positionxy[i][1] = (float) (dep * Math.sin((180 - i) * Math.PI
+						/ 180));
 			}
-			/*String txt = "";
-			float x = 0.0f;
-			float y = 0.0f;
-			for (float[] fl : positionxy) {
-				if (fl[0] != 0.0f && fl[1] != 0.0f) {
-					if (x != 0.0f) {
-					}
-					x= fl[0];
-					y=fl[1];
-					txt += "\nx" + fl[0] + " y" + fl[1];
+		}
+		Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
+		float previousX = 0.0f;
+		float previousY = 0.0f;
+		for (float[] fl : positionxy) {
+			if (fl != null) {
+				if (previousX != 0 && previousY != 0 && fl[0] != 0 && fl[1] != 0) {
+					Line line = new Line();
+					line.SetVerts(previousX, previousY, 0.0f, fl[0], fl[1],
+							0.0f);
+					line.draw(mMVPMatrix);
 				}
-			}*/
+				if (fl[0] != 0 && fl[1] != 0) {
+					previousX = fl[0];
+					previousY = fl[1];
+				}
+			}
+
 		}
 
 	}

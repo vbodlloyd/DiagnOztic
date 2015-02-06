@@ -16,7 +16,7 @@ public class HubActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
-		setContentView(R.layout.hub_activity);
+		setContentView(R.layout.hub2_activity);
 	}
 
 	@Override
