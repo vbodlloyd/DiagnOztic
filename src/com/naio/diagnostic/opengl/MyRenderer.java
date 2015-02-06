@@ -3,6 +3,7 @@ package com.naio.diagnostic.opengl;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.naio.opengl.Circle;
 import com.naio.opengl.Line;
 import com.naio.opengl.Square;
 import com.naio.opengl.Triangle;
@@ -96,6 +97,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 			if (position[i].floatValue() < 4000) {
 				float dep = (float) (position[i].floatValue() / 1000.0f) * 20.0f;
 				Matrix.translateM(mMVPMatrix, 0, dep, 0, 0);
+				
 				Matrix.scaleM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f);
 				mSquare.draw(mMVPMatrix);
 				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
@@ -106,6 +108,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 						/ 180));
 			}
 		}
+		draw_radar_scale();
 		Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
 		float previousX = 0.0f;
 		float previousY = 0.0f;
@@ -125,6 +128,21 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 		}
 
+	}
+
+	private void draw_radar_scale() {
+		Matrix.scaleM(mMVPMatrix, 0, 20, 20, 20);
+		Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
+		Circle circle = new Circle();
+		circle.draw(mMVPMatrix);
+		Matrix.scaleM(mMVPMatrix, 0, 2f, 2f, 2f);
+		circle.draw(mMVPMatrix);
+		Matrix.scaleM(mMVPMatrix, 0, 1.5f, 1.5f, 1.5f);
+		circle.draw(mMVPMatrix);
+		Matrix.scaleM(mMVPMatrix, 0, 160/120f, 160/120f, 160/120f);
+		circle.draw(mMVPMatrix);
+		Matrix.scaleM(mMVPMatrix, 0,0.00625f, 0.00625f, 0.00625f);
+		
 	}
 
 	@Override

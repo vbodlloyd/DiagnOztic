@@ -1,5 +1,7 @@
 int animator animation1 0x7f040000
 int animator animation2 0x7f040001
+int animator animation_end1 0x7f040002
+int animator animation_end2 0x7f040003
 int attr adSize 0x7f010000
 int attr adSizes 0x7f010001
 int attr adUnitId 0x7f010002

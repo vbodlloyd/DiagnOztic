@@ -113,6 +113,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		
 		readSocketThreadLidar.setStop(false);
 		readSocketThreadMap.setStop(false);
 		sendSocketThreadMotors.setStop(false);
@@ -150,7 +151,12 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		overridePendingTransition(R.animator.animation_end2, R.animator.animation_end1);
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
