@@ -142,7 +142,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 		Matrix.scaleM(mMVPMatrix, 0, 160/120f, 160/120f, 160/120f);
 		circle.draw(mMVPMatrix);
 		Matrix.scaleM(mMVPMatrix, 0,0.00625f, 0.00625f, 0.00625f);
-		
 	}
 
 	@Override

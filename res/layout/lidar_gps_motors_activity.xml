@@ -14,23 +14,23 @@
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
-        
-         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Lidar Oz"
-                android:textColor="@android:color/holo_green_dark"
-                android:textSize="30dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="2dp"
-                android:text="Lidar Oz"
-                android:textColor="@android:color/background_light"
-                android:textSize="30dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Lidar Oz"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="30dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:text="Lidar Oz"
+            android:textColor="@android:color/background_light"
+            android:textSize="30dp" />
     </FrameLayout>
 
     <LinearLayout
@@ -78,6 +78,37 @@
                 android:layout_width="400px"
                 android:layout_height="400px"
                 android:layout_gravity="center" />
+            
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200px"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginRight="50px"
+                android:src="@drawable/fleche" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200px"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginLeft="50px"
+                android:rotation="180"
+                android:src="@drawable/fleche" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200px"
+                android:layout_gravity="top|center_horizontal"
+                android:rotation="270"
+                android:src="@drawable/fleche" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200px"
+                android:layout_gravity="bottom|center_horizontal"
+                android:rotation="90"
+                android:src="@drawable/fleche" 
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,7 +117,7 @@
                 android:text="Contrôleur Oz"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="30dp" />
-
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,6 +126,8 @@
                 android:text="Contrôleur Oz"
                 android:textColor="@android:color/background_dark"
                 android:textSize="30dp" />
+
+            
         </FrameLayout>
     </LinearLayout>
 

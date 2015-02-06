@@ -11,12 +11,18 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 
 public class HubActivity extends Activity {
+	
+	public static String points_position_oz;
+	public static String metre_parcouru;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.hub2_activity);
+		points_position_oz = "";
+		metre_parcouru = "";
 	}
 
 	@Override
@@ -33,7 +39,11 @@ public class HubActivity extends Activity {
 		return true;
 	}
 	
-
+	public void go_to_bilan_activity(View v){
+		Intent intent = new Intent(this, BilanUtilisationActivity.class);
+		startActivity(intent);
+		overridePendingTransition(R.animator.animation3, R.animator.animation2);
+	}
 	
 	public void go_to_lidar_gps_control_activity(View v){
 		Intent intent = new Intent(this, LidarGPSMotorsActivity.class);

@@ -113,7 +113,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		
+		BilanUtilisationActivity.write_in_file(this);
 		readSocketThreadLidar.setStop(false);
 		readSocketThreadMap.setStop(false);
 		sendSocketThreadMotors.setStop(false);
@@ -135,6 +135,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					.color(Color.BLUE).addAll(listPointMap);
 			map.addPolyline(option);
 			listPointMap.add(latlng);
+			HubActivity.points_position_oz+= latlng.latitude + "#" + latlng.longitude + "%";
 			map.addMarker(new MarkerOptions().position(latlng).title("Oz"));
 			if (firstTimeDisplayTheMap) {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));

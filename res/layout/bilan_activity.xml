@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.naio.diagnostic.activities.BilanUtilisationActivity" >
+
+    <TextView
+        android:id="@+id/compteur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="66dp"
+        android:text="TextView" />
+    
+    <fragment
+        android:id="@+id/map_frag_frag"
+        android:layout_width="1000px"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        class="com.google.android.gms.maps.MapFragment" />
+
+</RelativeLayout>
