@@ -35,7 +35,7 @@ public class HubActivity extends Activity {
 	
 	public void go_to_lidar_gps_control_activity(View v){
 		Intent intent = new Intent(this, LidarGPSMotorsActivity.class);
-
 		startActivity(intent);
+		overridePendingTransition(R.animator.animation1, R.animator.animation2);
 	}
 }
