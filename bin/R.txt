@@ -131,9 +131,9 @@ int id grayscale 0x7f0c0015
 int id holo_dark 0x7f0c0007
 int id holo_light 0x7f0c0008
 int id hybrid 0x7f0c0003
-int id list 0x7f0c001d
-int id map_frag 0x7f0c001e
-int id map_frag_frag 0x7f0c001c
+int id list 0x7f0c001e
+int id map_frag 0x7f0c001f
+int id map_frag_frag 0x7f0c001d
 int id match_parent 0x7f0c000e
 int id monochrome 0x7f0c0016
 int id none 0x7f0c0002
@@ -143,9 +143,9 @@ int id sandbox 0x7f0c000a
 int id satellite 0x7f0c0005
 int id selectionDetails 0x7f0c000d
 int id socket_response 0x7f0c0017
+int id spinner 0x7f0c001c
 int id strict_sandbox 0x7f0c000b
 int id terrain 0x7f0c0006
-int id viewpager 0x7f0c001f
 int id wrap_content 0x7f0c000f
 int integer google_play_services_version 0x7f090000
 int layout activity_main 0x7f030000
@@ -153,7 +153,6 @@ int layout bilan_activity 0x7f030001
 int layout hub2_activity 0x7f030002
 int layout lidar_gps_motors_activity 0x7f030003
 int layout map_fragment 0x7f030004
-int layout viewpager 0x7f030005
 int menu main 0x7f0b0000
 int raw gtm_analytics 0x7f050000
 int string accept 0x7f070002

@@ -73,7 +73,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1" >
 
-            <com.naio.diagnostic.utils.AnalogueView
+            <com.naio.views.AnalogueView
                 android:id="@+id/analogueView1"
                 android:layout_width="400px"
                 android:layout_height="400px"

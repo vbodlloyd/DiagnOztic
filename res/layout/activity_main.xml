@@ -45,7 +45,7 @@
         android:layout_centerVertical="true"
         android:onClick="button_gof_motor_clicked"
         android:text="GO" />
-    <com.naio.diagnostic.utils.AnalogueView
+    <com.naio.views.AnalogueView
         android:id="@+id/analogueView1"
         android:layout_width="200px"
         android:layout_height="200px"

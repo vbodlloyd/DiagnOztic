@@ -19,7 +19,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+//CLASS NOT USE YET
 
+
+
+
+////
 public class OpenGLES20Activity extends Activity {
 
     private GLSurfaceView mGLView;

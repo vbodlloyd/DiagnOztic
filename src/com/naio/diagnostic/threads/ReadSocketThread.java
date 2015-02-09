@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.MemoryBuffer;
-import com.naio.diagnostic.utils.NetClient;
+import com.naio.net.NetClient;
 
 import net.sourceforge.juint.UInt8;
 

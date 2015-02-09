@@ -19,7 +19,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+// CLASS NOT USE YET
 
+
+
+///
+///
 public class GoogleMapV2Activity extends Activity {
 	static final LatLng HAMBURG = new LatLng(53.558, 9.927);
 	static final LatLng KIEL = new LatLng(53.551, 9.993);
@@ -32,20 +37,19 @@ public class GoogleMapV2Activity extends Activity {
 		public void run() {
 			read_the_queue();
 		}
-
-
 	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map_fragment);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		trameDecoder = new TrameDecoder();
 		memoryBuffer = new MemoryBuffer();
 		readSocketThread = new ReadSocketThread(memoryBuffer, Config.PORT_GPS);
 		readSocketThread.start();
 		handler.postDelayed(runnable, 20);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		map = ((MapFragment) getFragmentManager().findFragmentById(
 				R.id.map_frag)).getMap();
 

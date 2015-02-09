@@ -18,11 +18,13 @@ import com.naio.diagnostic.threads.SendSocketThread;
 import com.naio.diagnostic.trames.GPSTrame;
 import com.naio.diagnostic.trames.LidarTrame;
 import com.naio.diagnostic.trames.TrameDecoder;
-import com.naio.diagnostic.utils.AnalogueView;
 import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.MemoryBuffer;
-import com.naio.diagnostic.utils.AnalogueView.OnMoveListener;
+import com.naio.diagnostic.utils.MyMoveListenerForAnalogueView;
 import com.naio.opengl.MyGLSurfaceView;
+import com.naio.views.AnalogueView;
+import com.naio.views.AnalogueView.OnMoveListener;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -58,7 +60,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
 		// change the color of the action bar
@@ -88,7 +89,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			readSocketThreadLidar = new ReadSocketThread(memoryBufferLidar,
 					Config.PORT_LIDAR);
 			sendSocketThreadMotors = new SendSocketThread();
-
+			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -113,7 +114,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		BilanUtilisationActivity.write_in_file(this);
+		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
 		readSocketThreadMap.setStop(false);
 		sendSocketThreadMotors.setStop(false);
@@ -135,7 +136,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					.color(Color.BLUE).addAll(listPointMap);
 			map.addPolyline(option);
 			listPointMap.add(latlng);
-			HubActivity.points_position_oz+= latlng.latitude + "#" + latlng.longitude + "%";
+			DataManager.getInstance().addPoints_position_oz(latlng.latitude + "#" + latlng.longitude + "%");
 			map.addMarker(new MarkerOptions().position(latlng).title("Oz"));
 			if (firstTimeDisplayTheMap) {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
@@ -154,7 +155,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	}
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		overridePendingTransition(R.animator.animation_end2, R.animator.animation_end1);
 	}
@@ -172,103 +172,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 	private void set_the_analogueView() {
 		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
-		analView.setOnMoveListener(new OnMoveListener() {
-
-			@Override
-			public void onMaxMoveInDirection(int padDiff, int padSpeed) {
-				int bearing = padDiff * 127 / 180;
-				byte xa = 0;
-				byte ya = 0;
-				if (padSpeed >= 0) {
-					if (padSpeed + bearing > 127)
-						xa = (byte) 127;
-					else {
-						if (padSpeed + bearing < -127)
-							xa = (byte) -127;
-						else
-							xa = (byte) (padSpeed + bearing);
-					}
-
-					if (padSpeed - bearing < -127)
-						ya = (byte) -127;
-					else {
-						if (padSpeed - bearing > 127)
-							ya = (byte) 127;
-						else
-							ya = (byte) (padSpeed - bearing);
-					}
-
-				} else {
-					if (padSpeed - bearing < -127)
-						xa = (byte) -127;
-					else {
-						if (padSpeed - bearing > 127)
-							xa = (byte) 127;
-						else
-							xa = (byte) (padSpeed - bearing);
-					}
-					if (padSpeed + bearing > 127)
-						ya = (byte) 127;
-					else {
-						if (padSpeed + bearing < -127)
-							ya = (byte) -127;
-						else
-							ya = (byte) (padSpeed + bearing);
-					}
-				}
-				byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-						xa, ya, 0, 0, 0, 0 };
-				sendSocketThreadMotors.setBytes(b);
-			}
-
-			@Override
-			public void onHalfMoveInDirection(int padDiff, int padSpeed) {
-				int bearing = padDiff * 127 / 180;
-				byte xa = 0;
-				byte ya = 0;
-				if (padSpeed >= 0) {
-					if (padSpeed + bearing > 127)
-						xa = (byte) 127;
-					else {
-						if (padSpeed + bearing < -127)
-							xa = (byte) -127;
-						else
-							xa = (byte) (padSpeed + bearing);
-					}
-
-					if (padSpeed - bearing < -127)
-						ya = (byte) -127;
-					else {
-						if (padSpeed - bearing > 127)
-							ya = (byte) 127;
-						else
-							ya = (byte) (padSpeed - bearing);
-					}
-
-				} else {
-					if (padSpeed - bearing < -127)
-						xa = (byte) -127;
-					else {
-						if (padSpeed - bearing > 127)
-							xa = (byte) 127;
-						else
-							xa = (byte) (padSpeed - bearing);
-					}
-					if (padSpeed + bearing > 127)
-						ya = (byte) 127;
-					else {
-						if (padSpeed + bearing < -127)
-							ya = (byte) -127;
-						else
-							ya = (byte) (padSpeed + bearing);
-					}
-				}
-				byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-						xa, ya, 0, 0, 0, 0 };
-				sendSocketThreadMotors.setBytes(b);
-
-			}
-		});
-
+		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(sendSocketThreadMotors));
 	}
 }

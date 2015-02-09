@@ -39,4 +39,6 @@ public class Config {
 	public static final int ID_ACTUATOR = 12;
 
 	public static final int BUFFER_SIZE = 2048;
+	
+	public static final String FILE_SAVE_GPS = "bilan.naio";
 }

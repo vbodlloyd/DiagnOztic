@@ -1,108 +1,143 @@
 package com.naio.diagnostic.activities;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.naio.diagnostic.R;
-import com.naio.diagnostic.utils.MyPagerAdapter;
-
-import android.app.Activity;
-import android.content.Context;
+import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.DataManager;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class BilanUtilisationActivity extends FragmentActivity {
-	private ViewPager pager;
-	private MyPagerAdapter mPagerAdapter;
+
+	private GoogleMap map;
+	private HashMap<Integer, double[]> hashmap;
+	private String readfile;
+	private ArrayList<String> arrayDate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+
 		super.onCreate(savedInstanceState);
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
-		// setContentView(R.layout.bilan_activity);
-		String readfile = "";
+		setContentView(R.layout.bilan_activity);
+		readfile = "";
 		try {
-			readfile = getStringFromFile("bilan.naio");
+			readfile = DataManager.getInstance().getStringFromFile(this,
+					Config.FILE_SAVE_GPS);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		setContentView(R.layout.viewpager);// Création de la liste de
-		// Fragments que fera
-		// défiler le PagerAdapter
-		List fragments = new Vector();
 
-		// Ajout des Fragments dans la liste
-		String[] parse = readfile.split("\n");
-		for (int i = parse.length-1; i < parse.length; i++) {
-			Bundle bundle = new Bundle();
-			String[] gps = (parse[i].split("-")[3]).split("%");
-			double[] duble = new double[(gps.length-1)*2];
-			int j = 0;
-			for(String str : gps){
-				String lat = str.split("#")[0];
-				String lon = str.split("#")[1];
-				duble[j++] = Double.parseDouble(lat);
-				if(j >= gps.length){break;}
-				duble[j++] = Double.parseDouble(lon);
+		hashmap = new HashMap<Integer, double[]>();
+		fill_the_hashmap_with_gps_values();
+
+		map = ((MapFragment) getFragmentManager().findFragmentById(
+				R.id.map_frag_frag)).getMap();
+
+		display_the_spinner();
+
+	}
+
+	private void fill_the_hashmap_with_gps_values() {
+		arrayDate = new ArrayList<String>();
+		String[] all_messages_gps = readfile.split("\n");
+		int idx_for_hashmap = 0;
+		for (int i = 0; i < all_messages_gps.length; i++) {
+			String[] message_gps_parse = all_messages_gps[i].split("-");
+			if (message_gps_parse.length > 2) {
+				String[] gps = (message_gps_parse[3]).split("%");
+				arrayDate.add(message_gps_parse[0]);
+				double[] double_lat_lng = new double[(gps.length - 1) * 2];
+				int j = 0;
+				for (String str : gps) {
+					String lat = str.split("#")[0];
+					String lon = str.split("#")[1];
+					double_lat_lng[j++] = Double.parseDouble(lat);
+					if (j >= gps.length) {
+						break;
+					}
+					double_lat_lng[j++] = Double.parseDouble(lon);
+				}
+				hashmap.put(idx_for_hashmap++, double_lat_lng);
 			}
-			bundle.putDoubleArray("gps", duble);
-			fragments.add(Fragment.instantiate(this,
-					BilanUtilisationFragment.class.getName(),bundle));
 		}
-
-		// Création de l'adapter qui s'occupera de l'affichage de la
-		// liste de Fragments
-		this.mPagerAdapter = new MyPagerAdapter(
-				super.getSupportFragmentManager(), fragments);
-		pager = (ViewPager) super.findViewById(R.id.viewpager);
-		// Affectation de l'adapter au ViewPager
-		pager.setAdapter(this.mPagerAdapter);
-		pager.setOffscreenPageLimit(1);
 
 	}
 
-	public String convertStreamToString(InputStream is) throws Exception {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			sb.append(line).append("\n");
-		}
-		reader.close();
-		return sb.toString();
-	}
+	private void display_the_spinner() {
+		Spinner spinner = (Spinner) findViewById(R.id.spinner);
+		ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+				this, android.R.layout.simple_spinner_item, arrayDate);
+		spinnerArrayAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinner.setAdapter(spinnerArrayAdapter);
+		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-	public String getStringFromFile(String filePath) throws Exception {
-		File fl = new File(this.getFilesDir(), filePath);
-		FileInputStream fin = new FileInputStream(fl);
-		String ret = convertStreamToString(fin);
-		// Make sure you close all streams.
-		fin.close();
-		return ret;
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				// display the path that oz went by and add marker at the
+				// beginning and the end
+				double[] gps = hashmap.get(position);
+				ArrayList<LatLng> listPointMap = new ArrayList<LatLng>();
+				map.clear();
+				LatLng lastlat = null;
+				for (int i = 0; i < gps.length; i = i + 2) {
+					if (gps[i] == 0.0f || gps[i + 1] == 0.0f) {
+						continue;
+					}
+					LatLng latlng = new LatLng(gps[i], gps[i + 1]);
+					PolylineOptions option = new PolylineOptions().width(5)
+							.color(Color.BLUE).addAll(listPointMap);
+					map.addPolyline(option);
+					listPointMap.add(latlng);
+					if (i == 0) {
+						map.addMarker(new MarkerOptions().position(latlng)
+								.title("Oz Debut"));
+						map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+								latlng, 18));
+					}
+					lastlat = latlng;
+				}
+				map.addMarker(new MarkerOptions()
+						.position(lastlat)
+						.title("Oz Fin")
+						.icon(BitmapDescriptorFactory
+								.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
+
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
@@ -119,23 +154,6 @@ public class BilanUtilisationActivity extends FragmentActivity {
 		super.onPause();
 		overridePendingTransition(R.animator.animation_end2,
 				R.animator.animation_end1);
-	}
-
-	public static void write_in_file(Context ctx) {
-		File gpxfile = new File(ctx.getFilesDir(), "bilan.naio");
-		Date date = new Date();
-		FileWriter writer;
-		try {
-			writer = new FileWriter(gpxfile,true);
-			writer.append(date.toString() + "-15-" + HubActivity.metre_parcouru
-					+ "-" + HubActivity.points_position_oz + "\n");
-			writer.flush();
-			writer.close();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
 	}
 
 }

@@ -12,8 +12,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 
 public class HubActivity extends Activity {
 	
-	public static String points_position_oz;
-	public static String metre_parcouru;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +20,7 @@ public class HubActivity extends Activity {
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.hub2_activity);
-		points_position_oz = "";
-		metre_parcouru = "";
+		
 	}
 
 	@Override
