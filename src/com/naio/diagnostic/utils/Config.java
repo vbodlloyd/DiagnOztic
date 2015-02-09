@@ -16,6 +16,7 @@ public class Config {
 	public static final int LENGHT_HEADER = 6;
 	public static final int LENGHT_ID = 1;
 	public static final int LENGHT_SIZE = 4;
+	public static final int LENGHT_FULL_HEADER = 11;
 	public static final int LENGHT_CHECKSUM = 4;
 
 	public static final int LENGHT_TRAME_GPS = 43;
