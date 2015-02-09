@@ -6,10 +6,8 @@ import java.util.List;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.naio.diagnostic.R;
 import com.naio.diagnostic.opengl.OpenGLES20Fragment;
@@ -24,21 +22,17 @@ import com.naio.diagnostic.utils.MemoryBuffer;
 import com.naio.diagnostic.utils.MyMoveListenerForAnalogueView;
 import com.naio.opengl.MyGLSurfaceView;
 import com.naio.views.AnalogueView;
-import com.naio.views.AnalogueView.OnMoveListener;
 
-import android.app.Activity;
-import android.content.res.Resources;
+
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 public class LidarGPSMotorsActivity extends FragmentActivity {
 	private OpenGLES20Fragment openglfragment;
@@ -121,15 +115,19 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	}
 
 	private void read_the_queue() {
-		LidarTrame lidar = (LidarTrame) trameDecoder.decode(memoryBufferLidar
-				.getPollFifo());
-		if (lidar != null) {
-			((MyGLSurfaceView) openglfragment.getView())
-					.update_with_uint16(lidar.data_uint16());
-		}
+		display_lidar_info();
+		display_gps_info();
+		handler.postDelayed(runnable, 64);// 15FPS
+	}
+
+	private void display_gps_info() {
 		GPSTrame gps = (GPSTrame) trameDecoder.decode(memoryBufferMap
 				.getPollFifo());
 		if (gps != null) {
+			TextView altitude = (TextView) findViewById(R.id.textview_altitude);
+			altitude.setText("Altitude:" + gps.getAlt()+" m");
+			TextView vitesse = (TextView) findViewById(R.id.textview_groundspeed);
+			vitesse.setText("Vitesse:" + gps.getGroundSpeed()+" km/h");
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
 			PolylineOptions option = new PolylineOptions().width(5)
@@ -143,8 +141,22 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				firstTimeDisplayTheMap = false;
 			}
 		}
-		handler.postDelayed(runnable, 64);// 15FPS
+		
+	}
 
+	private void display_lidar_info() {
+		LidarTrame lidar = (LidarTrame) trameDecoder.decode(memoryBufferLidar
+				.getPollFifo());
+		if (lidar != null) {
+			((MyGLSurfaceView) openglfragment.getView())
+					.update_with_uint16(lidar.data_uint16());
+		}
+		
+	}
+	
+	private void set_the_analogueView() {
+		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
+		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(sendSocketThreadMotors));
 	}
 
 	@Override
@@ -168,10 +180,5 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	private void set_the_analogueView() {
-		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
-		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(sendSocketThreadMotors));
 	}
 }

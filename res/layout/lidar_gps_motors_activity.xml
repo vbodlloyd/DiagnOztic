@@ -66,6 +66,23 @@
                 android:text="Position Oz"
                 android:textColor="@android:color/background_dark"
                 android:textSize="30dp" />
+            
+            <TextView
+                android:id="@+id/textview_altitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Altitude: "
+                android:textSize="25dp" />
+            
+            <TextView
+                android:id="@+id/textview_groundspeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Vitesse: "
+                android:layout_marginBottom="30dp"
+                android:textSize="25dp" />
         </FrameLayout>
 
         <FrameLayout
@@ -78,7 +95,6 @@
                 android:layout_width="400px"
                 android:layout_height="400px"
                 android:layout_gravity="center" />
-            
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -107,8 +123,7 @@
                 android:layout_height="200px"
                 android:layout_gravity="bottom|center_horizontal"
                 android:rotation="90"
-                android:src="@drawable/fleche" 
-                />
+                android:src="@drawable/fleche" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -117,7 +132,7 @@
                 android:text="Contrôleur Oz"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="30dp" />
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -126,8 +141,6 @@
                 android:text="Contrôleur Oz"
                 android:textColor="@android:color/background_dark"
                 android:textSize="30dp" />
-
-            
         </FrameLayout>
     </LinearLayout>
 
