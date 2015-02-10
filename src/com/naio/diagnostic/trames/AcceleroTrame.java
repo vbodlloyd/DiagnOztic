@@ -1,7 +1,6 @@
 package com.naio.diagnostic.trames;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
 
 import com.naio.diagnostic.utils.Config;
 

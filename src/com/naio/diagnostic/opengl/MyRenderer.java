@@ -54,6 +54,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 	private float mAngle;
 	private Line mLine;
+	private double[][] points;
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -97,7 +98,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 			if (position[i].floatValue() < 4000) {
 				float dep = (float) (position[i].floatValue() / 1000.0f) * 20.0f;
 				Matrix.translateM(mMVPMatrix, 0, dep, 0, 0);
-				
+
 				Matrix.scaleM(mMVPMatrix, 0, 0.5f, 0.5f, 0.5f);
 				mSquare.draw(mMVPMatrix);
 				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
@@ -110,23 +111,22 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 		}
 		draw_radar_scale();
 		Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
-		float previousX = 0.0f;
-		float previousY = 0.0f;
-		for (float[] fl : positionxy) {
-			if (fl != null) {
-				if (previousX != 0 && previousY != 0 && fl[0] != 0 && fl[1] != 0) {
-					Line line = new Line();
-					line.SetVerts(previousX, previousY, 0.0f, fl[0], fl[1],
-							0.0f);
-					line.draw(mMVPMatrix);
-				}
-				if (fl[0] != 0 && fl[1] != 0) {
-					previousX = fl[0];
-					previousY = fl[1];
-				}
-			}
-
+		if (points != null) {
+			Line line = new Line();
+			line.SetVerts((float) points[0][0], (float) points[0][1], 0.0f,
+					(float) points[1][0], (float) points[1][1], 0.0f);
+			line.draw(mMVPMatrix);
 		}
+		/*
+		 * float previousX = 0.0f; float previousY = 0.0f; for (float[] fl :
+		 * positionxy) { if (fl != null) { if (previousX != 0 && previousY != 0
+		 * && fl[0] != 0 && fl[1] != 0) { Line line = new Line();
+		 * line.SetVerts(previousX, previousY, 0.0f, fl[0], fl[1], 0.0f);
+		 * line.draw(mMVPMatrix); } if (fl[0] != 0 && fl[1] != 0) { previousX =
+		 * fl[0]; previousY = fl[1]; } }
+		 * 
+		 * }
+		 */
 
 	}
 
@@ -139,9 +139,9 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 		circle.draw(mMVPMatrix);
 		Matrix.scaleM(mMVPMatrix, 0, 1.5f, 1.5f, 1.5f);
 		circle.draw(mMVPMatrix);
-		Matrix.scaleM(mMVPMatrix, 0, 160/120f, 160/120f, 160/120f);
+		Matrix.scaleM(mMVPMatrix, 0, 160 / 120f, 160 / 120f, 160 / 120f);
 		circle.draw(mMVPMatrix);
-		Matrix.scaleM(mMVPMatrix, 0,0.00625f, 0.00625f, 0.00625f);
+		Matrix.scaleM(mMVPMatrix, 0, 0.00625f, 0.00625f, 0.00625f);
 	}
 
 	@Override
@@ -221,6 +221,11 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 	 */
 	public void setAngle(float angle) {
 		mAngle = angle;
+	}
+
+	public void setPointsForLine(double[][] points) {
+		this.points = points;
+
 	}
 
 }

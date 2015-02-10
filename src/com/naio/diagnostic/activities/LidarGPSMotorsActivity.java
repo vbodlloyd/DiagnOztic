@@ -15,6 +15,7 @@ import com.naio.diagnostic.threads.ReadSocketThread;
 import com.naio.diagnostic.threads.SendSocketThread;
 import com.naio.diagnostic.trames.GPSTrame;
 import com.naio.diagnostic.trames.LidarTrame;
+import com.naio.diagnostic.trames.LogTrame;
 import com.naio.diagnostic.trames.TrameDecoder;
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
@@ -29,12 +30,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 public class LidarGPSMotorsActivity extends FragmentActivity {
+	private static final int MILLISECONDS_RUNNABLE = 64; //15fps
+	
 	private OpenGLES20Fragment openglfragment;
 	private TrameDecoder trameDecoder;
 	private MemoryBuffer memoryBufferLidar;
@@ -51,6 +55,10 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			read_the_queue();
 		}
 	};
+
+	private MemoryBuffer memoryBufferLog;
+
+	private ReadSocketThread readSocketThreadLog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			trameDecoder = new TrameDecoder();
 			memoryBufferLidar = new MemoryBuffer();
+			memoryBufferLog = new MemoryBuffer();
 			memoryBufferMap = new MemoryBuffer();
 			listPointMap = new ArrayList<LatLng>();
 			firstTimeDisplayTheMap = true;
@@ -82,6 +91,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					Config.PORT_GPS);
 			readSocketThreadLidar = new ReadSocketThread(memoryBufferLidar,
 					Config.PORT_LIDAR);
+			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
+					Config.PORT_LOG);
 			sendSocketThreadMotors = new SendSocketThread();
 			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
@@ -99,9 +110,10 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			// start the threads
 			readSocketThreadLidar.start();
 			readSocketThreadMap.start();
+			readSocketThreadLog.start();
 			sendSocketThreadMotors.start();
 
-			handler.postDelayed(runnable, 10);
+			handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
 		}
 	}
 
@@ -111,13 +123,15 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
 		readSocketThreadMap.setStop(false);
+		readSocketThreadLog.setStop(false);
 		sendSocketThreadMotors.setStop(false);
 	}
 
 	private void read_the_queue() {
 		display_lidar_info();
 		display_gps_info();
-		handler.postDelayed(runnable, 64);// 15FPS
+		display_lidar_lines();
+		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
 	}
 
 	private void display_gps_info() {
@@ -141,7 +155,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				firstTimeDisplayTheMap = false;
 			}
 		}
-		
 	}
 
 	private void display_lidar_info() {
@@ -151,9 +164,17 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			((MyGLSurfaceView) openglfragment.getView())
 					.update_with_uint16(lidar.data_uint16());
 		}
-		
 	}
+
+	private void display_lidar_lines() {
 	
+		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
+				.getPollFifo());
+		if (log != null) {
+			((MyGLSurfaceView) openglfragment.getView())
+					.update_with_double(log.getPoints());
+		}
+	}
 	private void set_the_analogueView() {
 		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
 		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(sendSocketThreadMotors));

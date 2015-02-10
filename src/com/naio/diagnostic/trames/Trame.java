@@ -11,7 +11,7 @@ public class Trame {
 		super();
 		this.naio01 = naio01;
 		this.id = id;
-		this.size = size;
+		this.setSize(size);
 		this.payload = payload;
 		this.checksum = checksum;
 	}
@@ -52,6 +52,10 @@ public class Trame {
 	public String show() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setSize(byte[] size) {
+		this.size = size;
 	}
 
 	

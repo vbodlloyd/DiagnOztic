@@ -2,7 +2,7 @@ package com.naio.diagnostic.utils;
 
 public class Config {
 
-	public static final String HOST = "192.168.1.111";
+	public static final String HOST = "192.168.1.149";//"192.168.1.111";
 
 	public static final int PORT_GPS = 4334;
 	public static final int PORT_LIDAR = 4337;
@@ -12,6 +12,7 @@ public class Config {
 	public static final int PORT_MAGNETO = 5337;
 	public static final int PORT_GYRO = 5331;
 	public static final int PORT_ODO = 5338;
+	public static final int PORT_LOG = 4339;
 
 	public static final int LENGHT_HEADER = 6;
 	public static final int LENGHT_ID = 1;
@@ -38,6 +39,7 @@ public class Config {
 	public static final int ID_GYRO = 10;
 	public static final int ID_MAGNETO = 11;
 	public static final int ID_ACTUATOR = 12;
+	public static final int ID_LOG = 13;
 
 	public static final int BUFFER_SIZE = 2048;
 	

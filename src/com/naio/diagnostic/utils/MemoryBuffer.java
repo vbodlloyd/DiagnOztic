@@ -45,7 +45,7 @@ public class MemoryBuffer {
 				break;
 			}
 		}
-		if (memoryBytes.length <= 0) {
+		if (memoryBytes.length >= 0) { // changement orientation > <
 
 			int position = posOfNaio[0];
 			if (position == 0) {
@@ -54,32 +54,39 @@ public class MemoryBuffer {
 				System.arraycopy(bytes, 0, finalc, memoryBytes.length,
 						bytes.length);
 				memoryBytes = finalc;
+				Log.e("bytes","first boucle");
 			} else {
 				byte[] o = Arrays.copyOfRange(bytes, 0, posOfNaio[0]);
 				byte[] finalc = new byte[memoryBytes.length + o.length];
 				System.arraycopy(memoryBytes, 0, finalc, 0, memoryBytes.length);
 				System.arraycopy(o, 0, finalc, memoryBytes.length, o.length);
 				fifo.offer(finalc);
+				Log.e("bytes","first boucle second option");
 			}
 		}
+		Log.e("bytes","nbrOfNaio:" + nbrOfNaio);
 		for (int i = 0; i < nbrOfNaio; i++) {
+			Log.e("bytes","in the loop");
 			int position = posOfNaio[i];
 			byte[] b = Arrays
 					.copyOfRange(bytes, position, bytesRead);
 			
-			if (b.length < 11) {
+			if (b.length < Config.LENGHT_FULL_HEADER) {
 				memoryBytes = b;
 			} else {
 				byte[] size = new byte[] { b[10], b[9], b[8], b[7] };
 				int sizeInt = ByteBuffer.wrap(size).getInt();
-				if (b.length < 11 + sizeInt + 4) {
+				if (b.length < Config.LENGHT_FULL_HEADER + sizeInt + Config.LENGHT_CHECKSUM) {
 					memoryBytes = b;
 				} else {
 					memoryBytes = new byte[]{};
+					Log.e("readee",b[0]+"-"+b[1]);
 					fifo.offer(b);
 				}
 			}
 		}
+		
+		
 	}
 
 	public byte[] getPollFifo() {
