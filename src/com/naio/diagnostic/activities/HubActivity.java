@@ -48,4 +48,10 @@ public class HubActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(R.animator.animation1, R.animator.animation2);
 	}
+	
+	public void go_to_camera_activity(View v){
+		Intent intent = new Intent(this, CameraActivity.class);
+		startActivity(intent);
+		overridePendingTransition(R.animator.animation1, R.animator.animation2);
+	}
 }

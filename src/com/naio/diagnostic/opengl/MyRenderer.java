@@ -1,8 +1,11 @@
 package com.naio.diagnostic.opengl;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.naio.diagnostic.utils.DataManager;
 import com.naio.opengl.Circle;
 import com.naio.opengl.Line;
 import com.naio.opengl.Square;
@@ -55,13 +58,17 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 	private float mAngle;
 	private Line mLine;
 	private double[][] points;
+	private ArrayList<double[][]> arrayListPoints;
+	public Object lock = new Object();
+	private ArrayList<double[][]> memoryArrayListPoints;
 
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 
 		// Set the background frame color
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
+		arrayListPoints = new ArrayList<double[][]>();
+		memoryArrayListPoints = new ArrayList<double[][]>();
 		mTriangle = new Triangle();
 		mSquare = new Square();
 		mLine = new Line();
@@ -117,6 +124,15 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 					(float) points[1][0], (float) points[1][1], 0.0f);
 			line.draw(mMVPMatrix);
 		}
+
+		for (double[][] point : DataManager.getInstance().getPollFifoLines()) {
+
+			Line line = new Line();
+			line.SetVerts((float) point[0][0], (float) point[0][1], 0.0f,
+					(float) point[1][0], (float) point[1][1], 0.0f);
+			line.draw(mMVPMatrix);
+		}
+
 		/*
 		 * float previousX = 0.0f; float previousY = 0.0f; for (float[] fl :
 		 * positionxy) { if (fl != null) { if (previousX != 0 && previousY != 0
@@ -221,11 +237,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 	 */
 	public void setAngle(float angle) {
 		mAngle = angle;
-	}
-
-	public void setPointsForLine(double[][] points) {
-		this.points = points;
-
 	}
 
 }

@@ -39,7 +39,7 @@ public class Config {
 	public static final int ID_GYRO = 10;
 	public static final int ID_MAGNETO = 11;
 	public static final int ID_ACTUATOR = 12;
-	public static final int ID_LOG = 13;
+	public static final int ID_LOG = 2;
 
 	public static final int BUFFER_SIZE = 2048;
 	

@@ -46,7 +46,6 @@ public class MemoryBuffer {
 				break;
 			}
 		}
-	
 		if (memoryBytes.length > 0) { // changement orientation > <
 
 			int position = posOfNaio[0];

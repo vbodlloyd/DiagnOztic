@@ -36,12 +36,17 @@ import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LidarGPSMotorsActivity extends FragmentActivity {
-	private static final int MILLISECONDS_RUNNABLE = 64; // 15fps
+	private static final int MILLISECONDS_RUNNABLE = 64; // 64 for 15fps
 
 	private OpenGLES20Fragment openglfragment;
 	private TrameDecoder trameDecoder;
@@ -64,10 +69,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 	private ReadSocketThread readSocketThreadLog;
 
-	private ImageView imageview;
-
-	private ImageView imageview_r;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -89,8 +90,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				});
 
 		if (savedInstanceState == null) {
-			imageview = (ImageView) findViewById(R.id.imageview);
-			imageview_r = (ImageView) findViewById(R.id.imageview_r);
 			trameDecoder = new TrameDecoder();
 			memoryBufferLidar = new MemoryBuffer();
 			memoryBufferLog = new MemoryBuffer();
@@ -141,25 +140,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		display_lidar_info();
 		display_gps_info();
 		display_lidar_lines();
-		display_image();
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
-	}
-
-	private void display_image() {
-		byte[] data = DataManager.getInstance().getPollFifoImage();
-		if (data == null)
-			return;
-
-		byte[] dataf = Arrays.copyOfRange(data, 1, data.length);
-
-		Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
-
-		if (data[0] == 0) {
-			imageview.setImageBitmap(bm);
-		} else {
-			imageview_r.setImageBitmap(bm);
-		}
-
 	}
 
 	private void display_gps_info() {
@@ -202,7 +183,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		if (log != null) {
 			if (log.getType() == 1)
 				((MyGLSurfaceView) openglfragment.getView())
-						.update_with_double(log.getPoints());
+						.update_line();
 		}
 	}
 

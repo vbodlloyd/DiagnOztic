@@ -5,17 +5,6 @@
     android:orientation="horizontal"
     tools:context="com.naio.diagnostic.activities.LidarGPSMotorsActivity" >
 
-    <ImageView
-        android:id="@+id/imageview"
-        android:layout_width="1200px"
-        android:layout_height="fill_parent" />
-    
-    <ImageView
-        android:id="@+id/imageview_r"
-        android:layout_width="1200px"
-        android:layout_marginLeft="10px"
-        android:layout_height="fill_parent" />
-
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -26,7 +15,9 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
 
+
         <TextView
+            android:id="@+id/txt_lidar_oz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -35,6 +26,7 @@
             android:textSize="30dp" />
 
         <TextView
+            android:id="@+id/txt_lidar_oz_shadow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

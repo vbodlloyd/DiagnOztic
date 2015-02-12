@@ -1,5 +1,7 @@
 package com.naio.diagnostic.trames;
 
+import android.util.Log;
+
 import com.naio.diagnostic.utils.Config;
 
 public class TrameDecoder {
@@ -9,6 +11,7 @@ public class TrameDecoder {
 		if(pollFifo == null){
 			return null;
 		}
+		Log.e("typeFifo",""+pollFifo[Config.LENGHT_HEADER]);
 		switch (pollFifo[Config.LENGHT_HEADER]) {
 		case Config.ID_GPS:
 			return new GPSTrame(pollFifo);

@@ -1,7 +1,10 @@
 package com.naio.opengl;
 
+import java.util.ArrayList;
+
 import com.naio.diagnostic.opengl.MyRenderer;
 import com.naio.diagnostic.trames.LogTrame;
+import com.naio.diagnostic.utils.DataManager;
 
 import net.sourceforge.juint.UInt16;
 import android.content.Context;
@@ -40,10 +43,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
 		requestRender();
 	}
 
-	public void update_with_double(double[][] points) {
-
-		mRenderer.setPointsForLine(points);
-		requestRender();
+	public void update_line() {
+		
+			requestRender();
+		
 	}
 
 }

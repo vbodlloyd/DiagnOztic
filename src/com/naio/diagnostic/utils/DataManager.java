@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -17,6 +18,7 @@ public class DataManager {
 	private  String metre_parcouru;
 	private  String nombre_choux;
 	public ConcurrentLinkedQueue<byte[]> fifoImage = new ConcurrentLinkedQueue<byte[]>();
+	public ConcurrentLinkedQueue<ArrayList<double[][]>> fifoLines = new ConcurrentLinkedQueue<ArrayList<double[][]>>() ;
 
 	private static DataManager instance;
 	
@@ -32,6 +34,7 @@ public class DataManager {
 		points_position_oz = "";
 		metre_parcouru = "";
 		fifoImage = new ConcurrentLinkedQueue<byte[]>();
+		fifoLines = new ConcurrentLinkedQueue<ArrayList<double[][]>>();
 	}
 	
 	public void write_in_file(Context ctx) {
@@ -120,6 +123,13 @@ public class DataManager {
 		for(int i=0; i< fifoImage.size() -1 ; i++){
 			fifoImage.poll();
 		}
-		return fifoImage.poll();
+		return fifoImage.peek();
+	}
+	
+	public ArrayList<double[][]> getPollFifoLines() {
+		for(int i=0; i< fifoLines.size() -1 ; i++){
+			fifoLines.poll();
+		}
+		return fifoLines.peek();
 	}
 }
