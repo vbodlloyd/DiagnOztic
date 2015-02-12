@@ -39,10 +39,12 @@ public class ReadSocketThread extends Thread {
 		byte[] buffer = new byte[Config.BUFFER_SIZE];
 		netClient = new NetClient(Config.HOST, port, "0");
 		netClient.connectWithServer();
+		int total = 0;
 		try {
 			while (this.stop) {
 				if (netClient.getIn() != null) {
 					if ((charsRead = netClient.getIn().read(buffer)) != -1) {
+	
 						memoryBuffer.addToFifo(buffer, charsRead);
 					} else {
 						try {

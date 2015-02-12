@@ -2,7 +2,7 @@ package com.naio.diagnostic.utils;
 
 public class Config {
 
-	public static final String HOST = "192.168.1.149";//"192.168.1.111";
+	public static final String HOST = "192.168.1.149";//"192.168.1.111";//
 
 	public static final int PORT_GPS = 4334;
 	public static final int PORT_LIDAR = 4337;

@@ -1,6 +1,8 @@
 package com.naio.diagnostic.activities;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,7 +26,8 @@ import com.naio.diagnostic.utils.MyMoveListenerForAnalogueView;
 import com.naio.opengl.MyGLSurfaceView;
 import com.naio.views.AnalogueView;
 
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,11 +37,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class LidarGPSMotorsActivity extends FragmentActivity {
-	private static final int MILLISECONDS_RUNNABLE = 64; //15fps
-	
+	private static final int MILLISECONDS_RUNNABLE = 64; // 15fps
+
 	private OpenGLES20Fragment openglfragment;
 	private TrameDecoder trameDecoder;
 	private MemoryBuffer memoryBufferLidar;
@@ -59,6 +63,10 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private MemoryBuffer memoryBufferLog;
 
 	private ReadSocketThread readSocketThreadLog;
+
+	private ImageView imageview;
+
+	private ImageView imageview_r;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +89,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				});
 
 		if (savedInstanceState == null) {
+			imageview = (ImageView) findViewById(R.id.imageview);
+			imageview_r = (ImageView) findViewById(R.id.imageview_r);
 			trameDecoder = new TrameDecoder();
 			memoryBufferLidar = new MemoryBuffer();
 			memoryBufferLog = new MemoryBuffer();
@@ -131,7 +141,25 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		display_lidar_info();
 		display_gps_info();
 		display_lidar_lines();
+		display_image();
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
+	}
+
+	private void display_image() {
+		byte[] data = DataManager.getInstance().getPollFifoImage();
+		if (data == null)
+			return;
+
+		byte[] dataf = Arrays.copyOfRange(data, 1, data.length);
+
+		Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
+
+		if (data[0] == 0) {
+			imageview.setImageBitmap(bm);
+		} else {
+			imageview_r.setImageBitmap(bm);
+		}
+
 	}
 
 	private void display_gps_info() {
@@ -139,16 +167,17 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				.getPollFifo());
 		if (gps != null) {
 			TextView altitude = (TextView) findViewById(R.id.textview_altitude);
-			altitude.setText("Altitude:" + gps.getAlt()+" m");
+			altitude.setText("Altitude:" + gps.getAlt() + " m");
 			TextView vitesse = (TextView) findViewById(R.id.textview_groundspeed);
-			vitesse.setText("Vitesse:" + gps.getGroundSpeed()+" km/h");
+			vitesse.setText("Vitesse:" + gps.getGroundSpeed() + " km/h");
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
 			PolylineOptions option = new PolylineOptions().width(5)
 					.color(Color.BLUE).addAll(listPointMap);
 			map.addPolyline(option);
 			listPointMap.add(latlng);
-			DataManager.getInstance().addPoints_position_oz(latlng.latitude + "#" + latlng.longitude + "%");
+			DataManager.getInstance().addPoints_position_oz(
+					latlng.latitude + "#" + latlng.longitude + "%");
 			map.addMarker(new MarkerOptions().position(latlng).title("Oz"));
 			if (firstTimeDisplayTheMap) {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
@@ -167,17 +196,20 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	}
 
 	private void display_lidar_lines() {
-	
+
 		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
 				.getPollFifo());
 		if (log != null) {
-			((MyGLSurfaceView) openglfragment.getView())
-					.update_with_double(log.getPoints());
+			if (log.getType() == 1)
+				((MyGLSurfaceView) openglfragment.getView())
+						.update_with_double(log.getPoints());
 		}
 	}
+
 	private void set_the_analogueView() {
 		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
-		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(sendSocketThreadMotors));
+		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(
+				sendSocketThreadMotors));
 	}
 
 	@Override
@@ -186,11 +218,14 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		overridePendingTransition(R.animator.animation_end2, R.animator.animation_end1);
+		overridePendingTransition(R.animator.animation_end2,
+				R.animator.animation_end1);
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will

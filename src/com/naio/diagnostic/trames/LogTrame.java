@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.sourceforge.juint.UInt8;
 
 import android.util.Log;
 
 import com.naio.diagnostic.utils.Config;
+import com.naio.diagnostic.utils.DataManager;
 
 public class LogTrame extends Trame {
 
@@ -26,8 +28,10 @@ public class LogTrame extends Trame {
 	public LogTrame(byte[] data) {
 		super(data);
 		int offset = data[Config.LENGHT_HEADER + Config.LENGHT_ID];
-		/*setSize(new byte[] { data[offset + 3], data[offset + 2],
-				data[offset + 1], data[offset] });*/
+		/*
+		 * setSize(new byte[] { data[offset + 3], data[offset + 2], data[offset
+		 * + 1], data[offset] });
+		 */
 		type = data[Config.LENGHT_FULL_HEADER];
 		Log.e("type", "something here");
 		if (type == 1) {
@@ -44,20 +48,19 @@ public class LogTrame extends Trame {
 			ligne_b_y = new byte[] { data[offset + 31], data[offset + 30],
 					data[offset + 29], data[offset + 28], data[offset + 27],
 					data[offset + 26], data[offset + 25], data[offset + 24] };
+
 		}
 		if (type == 2) {
 			Log.e("type", "good type ");
-			try {
-				FileOutputStream imageOutFile = new FileOutputStream(
-						"/sdcard/DCIM/imagerecu.png");
-				imageOutFile.write(Arrays.copyOfRange(data,
-						Config.LENGHT_FULL_HEADER + 1, data.length
-								- Config.LENGHT_CHECKSUM));
-				imageOutFile.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			byte[] datacopy = Arrays.copyOfRange(data,
+					Config.LENGHT_FULL_HEADER + 1, data.length
+							- Config.LENGHT_CHECKSUM);
+
+			//if (datacopy.length == 320*240*3 + 1) {
+				Log.e("sizeee", "" + datacopy.length);
+				DataManager.getInstance().fifoImage.offer(datacopy);
+			
 
 		}
 	}
@@ -81,6 +84,10 @@ public class LogTrame extends Trame {
 		points[0] = getPointB();
 		points[1] = getPointA();
 		return points;
+	}
+
+	public int getType() {
+		return type;
 	}
 
 }

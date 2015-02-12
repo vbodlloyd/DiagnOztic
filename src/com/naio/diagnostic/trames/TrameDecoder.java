@@ -9,7 +9,7 @@ public class TrameDecoder {
 		if(pollFifo == null){
 			return null;
 		}
-		switch (pollFifo[6]) {
+		switch (pollFifo[Config.LENGHT_HEADER]) {
 		case Config.ID_GPS:
 			return new GPSTrame(pollFifo);
 		case Config.ID_LIDAR:
@@ -26,7 +26,8 @@ public class TrameDecoder {
 		default:
 			break;
 		}
-		return new Trame(pollFifo);
+		
+		return null;
 				
 	}
 

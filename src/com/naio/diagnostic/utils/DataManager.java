@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.content.Context;
 
@@ -15,6 +16,7 @@ public class DataManager {
 	private  String points_position_oz;
 	private  String metre_parcouru;
 	private  String nombre_choux;
+	public ConcurrentLinkedQueue<byte[]> fifoImage = new ConcurrentLinkedQueue<byte[]>();
 
 	private static DataManager instance;
 	
@@ -29,6 +31,7 @@ public class DataManager {
 		super();
 		points_position_oz = "";
 		metre_parcouru = "";
+		fifoImage = new ConcurrentLinkedQueue<byte[]>();
 	}
 	
 	public void write_in_file(Context ctx) {
@@ -111,5 +114,12 @@ public class DataManager {
 	 */
 	public void setNombre_choux(String nombre_choux) {
 		this.nombre_choux = nombre_choux;
+	}
+	
+	public byte[] getPollFifoImage() {
+		for(int i=0; i< fifoImage.size() -1 ; i++){
+			fifoImage.poll();
+		}
+		return fifoImage.poll();
 	}
 }
