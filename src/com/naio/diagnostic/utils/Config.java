@@ -2,7 +2,7 @@ package com.naio.diagnostic.utils;
 
 public class Config {
 
-	public static final String HOST = "192.168.1.149";//"192.168.1.111";//
+	public static final String HOST = "10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
 
 	public static final int PORT_GPS = 4334;
 	public static final int PORT_LIDAR = 4337;
@@ -44,4 +44,8 @@ public class Config {
 	public static final int BUFFER_SIZE = 2048;
 	
 	public static final String FILE_SAVE_GPS = "bilan.naio";
+
+	public static final int LINES_SIZE_IN_BYTES = 16;
+	public static final int ID_BYTES_FOR_LINES = 2;
+
 }

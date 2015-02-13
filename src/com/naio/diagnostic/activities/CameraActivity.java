@@ -169,8 +169,7 @@ public class CameraActivity extends FragmentActivity {
 		if (data == null)
 			return;
 
-		byte[] dataf = Arrays.copyOfRange(data, 1, data.length);
-
+		byte[] dataf = Arrays.copyOfRange(data, 2, data.length);
 		Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
 		Log.e("typeLidarGps", "nbr image :" + nbrImage++);
 

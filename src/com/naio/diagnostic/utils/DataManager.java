@@ -18,7 +18,7 @@ public class DataManager {
 	private  String metre_parcouru;
 	private  String nombre_choux;
 	public ConcurrentLinkedQueue<byte[]> fifoImage = new ConcurrentLinkedQueue<byte[]>();
-	public ConcurrentLinkedQueue<ArrayList<double[][]>> fifoLines = new ConcurrentLinkedQueue<ArrayList<double[][]>>() ;
+	public ConcurrentLinkedQueue<ArrayList<float[][]>> fifoLines = new ConcurrentLinkedQueue<ArrayList<float[][]>>() ;
 
 	private static DataManager instance;
 	
@@ -34,7 +34,7 @@ public class DataManager {
 		points_position_oz = "";
 		metre_parcouru = "";
 		fifoImage = new ConcurrentLinkedQueue<byte[]>();
-		fifoLines = new ConcurrentLinkedQueue<ArrayList<double[][]>>();
+		fifoLines = new ConcurrentLinkedQueue<ArrayList<float[][]>>();
 	}
 	
 	public void write_in_file(Context ctx) {
@@ -126,7 +126,7 @@ public class DataManager {
 		return fifoImage.peek();
 	}
 	
-	public ArrayList<double[][]> getPollFifoLines() {
+	public ArrayList<float[][]> getPollFifoLines() {
 		for(int i=0; i< fifoLines.size() -1 ; i++){
 			fifoLines.poll();
 		}

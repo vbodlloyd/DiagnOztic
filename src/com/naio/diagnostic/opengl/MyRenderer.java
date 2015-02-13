@@ -110,29 +110,13 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 				mSquare.draw(mMVPMatrix);
 				Matrix.scaleM(mMVPMatrix, 0, 2, 2, 2);
 				Matrix.translateM(mMVPMatrix, 0, -1.0f * dep, 0, 0);
-				positionxy[i][0] = (float) (dep * Math.cos((180 - i) * Math.PI
-						/ 180));
-				positionxy[i][1] = (float) (dep * Math.sin((180 - i) * Math.PI
-						/ 180));
+				/*
+				 * positionxy[i][0] = (float) (dep * Math.cos((180 - i) *
+				 * Math.PI / 180)); positionxy[i][1] = (float) (dep *
+				 * Math.sin((180 - i) * Math.PI / 180));
+				 */
 			}
 		}
-		draw_radar_scale();
-		Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
-		if (points != null) {
-			Line line = new Line();
-			line.SetVerts((float) points[0][0], (float) points[0][1], 0.0f,
-					(float) points[1][0], (float) points[1][1], 0.0f);
-			line.draw(mMVPMatrix);
-		}
-
-		for (double[][] point : DataManager.getInstance().getPollFifoLines()) {
-
-			Line line = new Line();
-			line.SetVerts((float) point[0][0], (float) point[0][1], 0.0f,
-					(float) point[1][0], (float) point[1][1], 0.0f);
-			line.draw(mMVPMatrix);
-		}
-
 		/*
 		 * float previousX = 0.0f; float previousY = 0.0f; for (float[] fl :
 		 * positionxy) { if (fl != null) { if (previousX != 0 && previousY != 0
@@ -143,6 +127,22 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 		 * 
 		 * }
 		 */
+		draw_radar_scale();
+		Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
+		/*
+		 * if (points != null) { Line line = new Line(); line.SetVerts((float)
+		 * points[0][0], (float) points[0][1], 0.0f, (float) points[1][0],
+		 * (float) points[1][1], 0.0f); line.draw(mMVPMatrix); }
+		 */
+		if (DataManager.getInstance().getPollFifoLines() != null) {
+			for (float[][] point : DataManager.getInstance().getPollFifoLines()) {
+
+				Line line = new Line();
+				line.SetVerts(point[0][0], point[0][1], 0.0f, point[1][0],
+						point[1][1], 0.0f);
+				line.draw(mMVPMatrix);
+			}
+		}
 
 	}
 
