@@ -95,13 +95,31 @@
                 android:textSize="40dp" />
         </FrameLayout>
 
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/form_hub"
             android:clickable="true"
             android:onClick="go_to_camera_activity"
-            android:src="@drawable/logo_naio" />
+            android:padding="5dp" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/stereo" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/selector_textview_background_hub"
+                android:text="Cameras"
+                android:textColor="@color/selector_textview_hub"
+                android:textSize="40dp" />
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>
