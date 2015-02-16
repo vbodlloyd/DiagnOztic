@@ -8,13 +8,12 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1" >
+        android:layout_weight="2" >
 
         <FrameLayout
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
-
 
         <TextView
             android:id="@+id/txt_lidar_oz"
@@ -39,7 +38,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:orientation="vertical" >
 
         <FrameLayout
@@ -144,6 +143,20 @@
                 android:text="Contrôleur Oz"
                 android:textColor="@android:color/background_dark"
                 android:textSize="30dp" />
+
+            <Button
+                android:id="@+id/actuator_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|left"
+                android:text="V" />
+
+            <Button
+                android:id="@+id/actuator_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:text="^" />
         </FrameLayout>
     </LinearLayout>
 

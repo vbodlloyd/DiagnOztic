@@ -116,7 +116,9 @@ int drawable ou_aller 0x7f020028
 int drawable powered_by_google_dark 0x7f020029
 int drawable powered_by_google_light 0x7f02002a
 int drawable selector_textview_background_hub 0x7f02002b
-int id action_settings 0x7f0c0026
+int id action_settings 0x7f0c0028
+int id actuator_down 0x7f0c0026
+int id actuator_up 0x7f0c0027
 int id adjust_height 0x7f0c0000
 int id adjust_width 0x7f0c0001
 int id analogueView1 0x7f0c001a

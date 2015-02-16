@@ -36,10 +36,13 @@ import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -68,6 +71,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private MemoryBuffer memoryBufferLog;
 
 	private ReadSocketThread readSocketThreadLog;
+
+	private SendSocketThread sendSocketThreadActuators;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
 					Config.PORT_LOG);
 			sendSocketThreadMotors = new SendSocketThread();
+			sendSocketThreadActuators = new SendSocketThread();
 			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -115,12 +121,14 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map_frag)).getMap();
 			set_the_analogueView();
+			set_the_actuator_button();
 
 			// start the threads
 			readSocketThreadLidar.start();
 			readSocketThreadMap.start();
 			readSocketThreadLog.start();
 			sendSocketThreadMotors.start();
+			sendSocketThreadActuators.start();
 
 			handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
 		}
@@ -182,8 +190,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				.getPollFifo());
 		if (log != null) {
 			if (log.getType() == 1)
-				((MyGLSurfaceView) openglfragment.getView())
-						.update_line();
+				((MyGLSurfaceView) openglfragment.getView()).update_line();
 		}
 	}
 
@@ -217,5 +224,75 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void set_the_actuator_button() {
+		Button btn = (Button) findViewById(R.id.actuator_down);
+		Button btn2 = (Button) findViewById(R.id.actuator_up);
+		btn.setOnTouchListener(new OnTouchListener() {
+			byte[] byteDown = { 0x0, 0x2 };
+			private Handler mHandler;
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 500);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
+
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					sendSocketThreadActuators.setBytes(byteDown);
+					mHandler.postDelayed(this, 500);
+				}
+			};
+
+		});
+
+		btn2.setOnTouchListener(new OnTouchListener() {
+			byte[] byteDown = { 0x0, 0x1 };
+			private Handler mHandler;
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 500);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
+
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					sendSocketThreadActuators.setBytes(byteDown);
+					mHandler.postDelayed(this, 500);
+				}
+			};
+
+		});
 	}
 }
