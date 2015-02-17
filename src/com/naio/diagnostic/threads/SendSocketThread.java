@@ -13,14 +13,16 @@ public class SendSocketThread extends Thread {
 	private final Object lock2 = new Object();
 	private byte[] bytes;
 	private NetClient netClient;
+	private int port;
 
 	public SendSocketThread(byte[] bytes) {
 		this.bytes = bytes;
 		this.stop = true;
 	}
 
-	public SendSocketThread() {
+	public SendSocketThread(int port) {
 		this.stop = true;
+		this.port = port;
 	}
 
 	public void setBytes(byte[] bytes) {
@@ -31,7 +33,7 @@ public class SendSocketThread extends Thread {
 	}
 
 	public void run() {
-		netClient = new NetClient(Config.HOST, Config.PORT_MOTORS, "0");
+		netClient = new NetClient(Config.HOST, port, "0");
 		netClient.connectWithServer();
 		while (stop) {
 			synchronized (lock1) {

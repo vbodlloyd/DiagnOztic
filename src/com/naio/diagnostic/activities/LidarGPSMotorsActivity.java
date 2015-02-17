@@ -107,8 +107,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					Config.PORT_LIDAR);
 			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
 					Config.PORT_LOG);
-			sendSocketThreadMotors = new SendSocketThread();
-			sendSocketThreadActuators = new SendSocketThread();
+			sendSocketThreadMotors = new SendSocketThread(Config.PORT_MOTORS);
+			sendSocketThreadActuators = new SendSocketThread(Config.PORT_ACTUATOR);
 			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

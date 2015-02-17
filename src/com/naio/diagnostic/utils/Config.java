@@ -4,15 +4,16 @@ public class Config {
 
 	public static final String HOST = "10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
 
-	public static final int PORT_GPS = 4334;
-	public static final int PORT_LIDAR = 4337;
-	public static final int PORT_MOTORS = 4331;
-	public static final int PORT_REMOTE = 4338;
+	public static final int PORT_GPS = 3334;
+	public static final int PORT_LIDAR = 3337;
+	public static final int PORT_MOTORS = 3331;
+	public static final int PORT_REMOTE = 3338;
 	public static final int PORT_ACCELERO = 5334;
 	public static final int PORT_MAGNETO = 5337;
 	public static final int PORT_GYRO = 5331;
 	public static final int PORT_ODO = 5338;
 	public static final int PORT_LOG = 4339;
+	public static final int PORT_ACTUATOR = 3345;
 
 	public static final int LENGHT_HEADER = 6;
 	public static final int LENGHT_ID = 1;
