@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,6 +23,7 @@ public class AnalogueView extends View {
 
     private int toDo;
 	private OnMoveListener moveListener;
+	Handler mHandler = new Handler();
 
     public AnalogueView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -108,16 +110,13 @@ public class AnalogueView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+   
         switch(event.getAction()){
         case MotionEvent.ACTION_DOWN :
-            updatePosition(event);
-            break;
-
         case MotionEvent.ACTION_MOVE :
             updatePosition(event);
             break;
-
+        
         case MotionEvent.ACTION_UP :
             toDo = 1; 
             center(); 
@@ -125,6 +124,7 @@ public class AnalogueView extends View {
         default :break;
 
         }
+       
 
         return true;
     }

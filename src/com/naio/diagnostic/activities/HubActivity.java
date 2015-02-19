@@ -1,10 +1,12 @@
 package com.naio.diagnostic.activities;
 
 import com.naio.diagnostic.R;
+import com.naio.diagnostic.utils.DataManager;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
@@ -20,6 +22,12 @@ public class HubActivity extends Activity {
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.hub2_activity);
+		try {
+			Log.e("logav",DataManager.getInstance().getStringFromFile(this, "log.naio"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

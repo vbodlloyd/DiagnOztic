@@ -103,6 +103,6 @@ public class MemoryBuffer {
 		for(int i=0; i< fifo.size() -1 ; i++){
 			fifo.poll();
 		}
-		return fifo.poll();
+		return fifo.peek();
 	}
 }

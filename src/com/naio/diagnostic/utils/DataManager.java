@@ -53,6 +53,20 @@ public class DataManager {
 
 	}
 	
+	public void write_in_log(Context ctx,String str) {
+		File gpxfile = new File(ctx.getFilesDir(), "log.naio");
+		FileWriter writer;
+		try {
+			writer = new FileWriter(gpxfile, false);
+			writer.append(str);
+			writer.flush();
+			writer.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+	}
+	
 	private String convertStreamToString(InputStream is) throws Exception {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();

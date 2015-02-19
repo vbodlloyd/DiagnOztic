@@ -154,11 +154,14 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private void display_gps_info() {
 		GPSTrame gps = (GPSTrame) trameDecoder.decode(memoryBufferMap
 				.getPollFifo());
+		
 		if (gps != null) {
+		
 			TextView altitude = (TextView) findViewById(R.id.textview_altitude);
 			altitude.setText("Altitude:" + gps.getAlt() + " m");
 			TextView vitesse = (TextView) findViewById(R.id.textview_groundspeed);
 			vitesse.setText("Vitesse:" + gps.getGroundSpeed() + " km/h");
+			DataManager.getInstance().write_in_log(this, "alt and vitesse : "+gps.getAlt()+"---"+gps.getGroundSpeed()+"\n");
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
 			PolylineOptions option = new PolylineOptions().width(5)
@@ -230,68 +233,45 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		Button btn = (Button) findViewById(R.id.actuator_down);
 		Button btn2 = (Button) findViewById(R.id.actuator_up);
 		btn.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = { 0x0, 0x2 };
-			private Handler mHandler;
+			byte[] byteDown = { (byte)0x2 };
+		
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					if (mHandler != null)
-						return true;
-					mHandler = new Handler();
-					mHandler.postDelayed(mAction, 500);
+					sendSocketThreadActuators.setBytes(byteDown);
 					break;
 				case MotionEvent.ACTION_UP:
-					if (mHandler == null)
-						return true;
-					mHandler.removeCallbacks(mAction);
-					mHandler = null;
+				
 					break;
 				}
 				return false;
 			}
 
-			Runnable mAction = new Runnable() {
-				@Override
-				public void run() {
-					sendSocketThreadActuators.setBytes(byteDown);
-					mHandler.postDelayed(this, 500);
-				}
-			};
+			
 
 		});
 
 		btn2.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = { 0x0, 0x1 };
+			byte[] byteDown = {(byte)0x1 };
 			private Handler mHandler;
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
-					if (mHandler != null)
-						return true;
-					mHandler = new Handler();
-					mHandler.postDelayed(mAction, 500);
+					sendSocketThreadActuators.setBytes(byteDown);
+					
 					break;
 				case MotionEvent.ACTION_UP:
-					if (mHandler == null)
-						return true;
-					mHandler.removeCallbacks(mAction);
-					mHandler = null;
+	
 					break;
 				}
 				return false;
 			}
 
-			Runnable mAction = new Runnable() {
-				@Override
-				public void run() {
-					sendSocketThreadActuators.setBytes(byteDown);
-					mHandler.postDelayed(this, 500);
-				}
-			};
+			
 
 		});
 	}

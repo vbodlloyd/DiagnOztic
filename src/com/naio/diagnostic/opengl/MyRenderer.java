@@ -99,7 +99,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 		Matrix.rotateM(mMVPMatrix, 0, 181, 0, 0, 1);
 		// Draw square
 
-		float[] positionxy[] = new float[180][2];
+		//float[] positionxy[] = new float[180][2];
 		for (int i = 0; i < 180; i++) {
 			Matrix.rotateM(mMVPMatrix, 0, -1, 0, 0, 1);
 			if (position[i].floatValue() < 4000) {
