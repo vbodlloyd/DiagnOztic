@@ -42,8 +42,9 @@ public class SendSocketThread extends Thread {
 					lock1.wait();
 					if (netClient.getOut() != null) {
 						netClient.getOut().write(bytes);
+						Thread.sleep(10, 0);
 					} else
-						Thread.sleep(1, 10);
+						Thread.sleep(10, 0);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

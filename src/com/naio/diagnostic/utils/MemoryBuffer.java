@@ -1,10 +1,14 @@
 package com.naio.diagnostic.utils;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Garde en mémoire la fin d'une trame non fini et la complete avec la suivante.
@@ -20,7 +24,12 @@ public class MemoryBuffer {
 
 	public void addToFifo(byte[] bytess, int bytesRead) {
 		byte[] bytes =bytess.clone();
-		
+		DataManager.getInstance().write_in_log( "\n----------------- add to fifo : "+ bytesRead + " four characters : "+ bytes[0] +"--"+ bytes[1]+"---"+ bytes[2]+"--"+ bytes[3]);
+
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+	Date date = new Date();
+
 		int idx = 0;
 		int pos = 0;
 		int mem = 0;
@@ -46,7 +55,7 @@ public class MemoryBuffer {
 				break;
 			}
 		}
-		if (memoryBytes.length > 0) { // changement orientation > <
+		if (memoryBytes.length > 0) { 
 
 			int position = posOfNaio[0];
 
@@ -57,6 +66,8 @@ public class MemoryBuffer {
 				System.arraycopy(bytes, 0, finalc, memoryBytes.length,
 						bytesRead);
 				memoryBytes = finalc;
+				
+				DataManager.getInstance().write_in_log( "\n "+sdf.format(date)+ " | mess in buffer not finish :");
 		
 			} else {
 	
@@ -67,13 +78,14 @@ public class MemoryBuffer {
 				System.arraycopy(o, 0, finalc, memoryBytes.length, o.length);
 
 				fifo.offer(finalc);
+				DataManager.getInstance().write_in_log( "\n"+sdf.format(date)+ " | mess in buffer finish :");
 				memoryBytes = new byte[]{};
 		
 			}
 		}
-
+		
 		for (int i = 0; i < nbrOfNaio; i++) {
-;
+
 			int position = posOfNaio[i];
 			byte[] b = Arrays
 					.copyOfRange(bytes, position, bytesRead);
@@ -82,15 +94,19 @@ public class MemoryBuffer {
 				memoryBytes = b;
 
 			} else {
-				byte[] size = new byte[] { b[10], b[9], b[8], b[7] };
+				byte[] size = new byte[] { b[7], b[8], b[9], b[10] };//{ b[10], b[9], b[8], b[7] };
 				int sizeInt = ByteBuffer.wrap(size).getInt();
 				if (b.length < Config.LENGHT_FULL_HEADER + sizeInt + Config.LENGHT_CHECKSUM) {
 					memoryBytes = b;
-
+				
+					DataManager.getInstance().write_in_log( "\n"+sdf.format(date)+ " | mess not finish :");
 				} else {
 		
 					memoryBytes = new byte[]{};
 					fifo.offer(b);
+		
+					DataManager.getInstance().write_in_log( "\n"+sdf.format(date)+ " | mess finish :");
+					
 
 				}
 			}
@@ -105,4 +121,5 @@ public class MemoryBuffer {
 		}
 		return fifo.peek();
 	}
+
 }

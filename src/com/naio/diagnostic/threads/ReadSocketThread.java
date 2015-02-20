@@ -1,6 +1,7 @@
 package com.naio.diagnostic.threads;
 
 import java.io.IOException;
+import android.content.Context;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +27,7 @@ public class ReadSocketThread extends Thread {
 	public ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
 	private MemoryBuffer memoryBuffer;
 	private int port;
+	private Context context;
 
 	public ReadSocketThread(MemoryBuffer memoryBuffer, int port) {
 		this.port = port;
@@ -33,6 +35,7 @@ public class ReadSocketThread extends Thread {
 		queue = new ConcurrentLinkedQueue<String>();
 		this.stop = true;
 	}
+
 
 	public void run() {
 		int charsRead = 0;
@@ -46,13 +49,14 @@ public class ReadSocketThread extends Thread {
 					if ((charsRead = netClient.getIn().read(buffer)) != -1) {
 	
 						memoryBuffer.addToFifo(buffer, charsRead);
-					} else {
 						try {
-							Thread.sleep(0, 1);
+							Thread.sleep(0, 10);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					} else {
+						
 					}
 				} else {
 					try {

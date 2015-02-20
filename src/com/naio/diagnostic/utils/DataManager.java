@@ -53,11 +53,11 @@ public class DataManager {
 
 	}
 	
-	public void write_in_log(Context ctx,String str) {
-		File gpxfile = new File(ctx.getFilesDir(), "log.naio");
+	public void write_in_log(String str) {
+		File gpxfile = new File("/storage/emulated/legacy/", "log.naio");
 		FileWriter writer;
 		try {
-			writer = new FileWriter(gpxfile, false);
+			writer = new FileWriter(gpxfile, true);
 			writer.append(str);
 			writer.flush();
 			writer.close();

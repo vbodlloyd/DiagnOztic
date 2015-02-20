@@ -139,9 +139,15 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		super.onBackPressed();
 		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
+		readSocketThreadLidar = new ReadSocketThread(null, 0);
 		readSocketThreadMap.setStop(false);
+		readSocketThreadMap = new ReadSocketThread(null, 0);
 		readSocketThreadLog.setStop(false);
+		readSocketThreadLog = new ReadSocketThread(null, 0);
 		sendSocketThreadMotors.setStop(false);
+		sendSocketThreadMotors = new SendSocketThread(null);
+		sendSocketThreadActuators.setStop(false);
+		sendSocketThreadActuators = new SendSocketThread(null);
 	}
 
 	private void read_the_queue() {
@@ -161,7 +167,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			altitude.setText("Altitude:" + gps.getAlt() + " m");
 			TextView vitesse = (TextView) findViewById(R.id.textview_groundspeed);
 			vitesse.setText("Vitesse:" + gps.getGroundSpeed() + " km/h");
-			DataManager.getInstance().write_in_log(this, "alt and vitesse : "+gps.getAlt()+"---"+gps.getGroundSpeed()+"\n");
+			DataManager.getInstance().write_in_log("alt and vitesse : "+gps.getAlt()+"---"+gps.getGroundSpeed()+"\n");
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
 			PolylineOptions option = new PolylineOptions().width(5)
@@ -233,7 +239,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		Button btn = (Button) findViewById(R.id.actuator_down);
 		Button btn2 = (Button) findViewById(R.id.actuator_up);
 		btn.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = { (byte)0x2 };
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xc, 1, 0, 0, 0, 2,
+					0, 0, 0, 0 };
 		
 
 			@Override
@@ -254,7 +261,9 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		});
 
 		btn2.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = {(byte)0x1 };
+	
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xc, 0, 0, 0, 1, 1,
+					0, 0, 0, 0 };
 			private Handler mHandler;
 
 			@Override
