@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -19,6 +20,7 @@ public class DataManager {
 	private  String nombre_choux;
 	public ConcurrentLinkedQueue<byte[]> fifoImage = new ConcurrentLinkedQueue<byte[]>();
 	public ConcurrentLinkedQueue<ArrayList<float[][]>> fifoLines = new ConcurrentLinkedQueue<ArrayList<float[][]>>() ;
+	private SimpleDateFormat sdf;
 
 	private static DataManager instance;
 	
@@ -31,6 +33,9 @@ public class DataManager {
 	
 	private DataManager(){
 		super();
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+		
 		points_position_oz = "";
 		metre_parcouru = "";
 		fifoImage = new ConcurrentLinkedQueue<byte[]>();
@@ -54,11 +59,12 @@ public class DataManager {
 	}
 	
 	public void write_in_log(String str) {
+		Date date = new Date();
 		File gpxfile = new File("/storage/emulated/legacy/", "log.naio");
 		FileWriter writer;
 		try {
 			writer = new FileWriter(gpxfile, true);
-			writer.append(str);
+			writer.append("["+sdf.format(date)+"] : "+str+"\n");
 			writer.flush();
 			writer.close();
 		} catch (IOException e1) {

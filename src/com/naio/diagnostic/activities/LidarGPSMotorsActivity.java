@@ -23,6 +23,7 @@ import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.MemoryBuffer;
 import com.naio.diagnostic.utils.MyMoveListenerForAnalogueView;
+import com.naio.diagnostic.utils.NewMemoryBuffer;
 import com.naio.opengl.MyGLSurfaceView;
 import com.naio.views.AnalogueView;
 
@@ -33,7 +34,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -53,13 +53,13 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 	private OpenGLES20Fragment openglfragment;
 	private TrameDecoder trameDecoder;
-	private MemoryBuffer memoryBufferLidar;
+	private NewMemoryBuffer memoryBufferLidar;
 	private ReadSocketThread readSocketThreadLidar;
 	private Handler handler = new Handler();
 	private SendSocketThread sendSocketThreadMotors;
 	private GoogleMap map;
 	private ReadSocketThread readSocketThreadMap;
-	private MemoryBuffer memoryBufferMap;
+	private NewMemoryBuffer memoryBufferMap;
 	private boolean firstTimeDisplayTheMap;
 	private List<LatLng> listPointMap;
 	Runnable runnable = new Runnable() {
@@ -68,7 +68,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		}
 	};
 
-	private MemoryBuffer memoryBufferLog;
+	private NewMemoryBuffer memoryBufferLog;
 
 	private ReadSocketThread readSocketThreadLog;
 
@@ -96,9 +96,9 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			trameDecoder = new TrameDecoder();
-			memoryBufferLidar = new MemoryBuffer();
-			memoryBufferLog = new MemoryBuffer();
-			memoryBufferMap = new MemoryBuffer();
+			memoryBufferLidar = new NewMemoryBuffer();
+			memoryBufferLog = new NewMemoryBuffer();
+			memoryBufferMap = new NewMemoryBuffer();
 			listPointMap = new ArrayList<LatLng>();
 			firstTimeDisplayTheMap = true;
 			readSocketThreadMap = new ReadSocketThread(memoryBufferMap,
@@ -139,15 +139,16 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		super.onBackPressed();
 		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
-		readSocketThreadLidar = new ReadSocketThread(null, 0);
+		
 		readSocketThreadMap.setStop(false);
-		readSocketThreadMap = new ReadSocketThread(null, 0);
+		
 		readSocketThreadLog.setStop(false);
-		readSocketThreadLog = new ReadSocketThread(null, 0);
+		
 		sendSocketThreadMotors.setStop(false);
-		sendSocketThreadMotors = new SendSocketThread(null);
+		
 		sendSocketThreadActuators.setStop(false);
-		sendSocketThreadActuators = new SendSocketThread(null);
+		
+		handler.removeCallbacks(runnable);
 	}
 
 	private void read_the_queue() {
@@ -239,7 +240,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		Button btn = (Button) findViewById(R.id.actuator_down);
 		Button btn2 = (Button) findViewById(R.id.actuator_up);
 		btn.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xc, 1, 0, 0, 0, 2,
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0, 0, 0, 2,
 					0, 0, 0, 0 };
 		
 
@@ -250,7 +251,6 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					sendSocketThreadActuators.setBytes(byteDown);
 					break;
 				case MotionEvent.ACTION_UP:
-				
 					break;
 				}
 				return false;
@@ -262,7 +262,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 		btn2.setOnTouchListener(new OnTouchListener() {
 	
-			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xc, 0, 0, 0, 1, 1,
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0, 0, 0, 1,
 					0, 0, 0, 0 };
 			private Handler mHandler;
 

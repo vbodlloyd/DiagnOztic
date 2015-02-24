@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import net.sourceforge.juint.UInt8;
-
-import android.util.Log;
-
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
 

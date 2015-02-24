@@ -10,13 +10,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.MemoryBuffer;
+import com.naio.diagnostic.utils.NewMemoryBuffer;
 import com.naio.net.NetClient;
 
-import net.sourceforge.juint.UInt8;
 
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.util.Log;
+
 
 public class ReadSocketThread extends Thread {
 
@@ -28,10 +26,19 @@ public class ReadSocketThread extends Thread {
 	private MemoryBuffer memoryBuffer;
 	private int port;
 	private Context context;
+	private NewMemoryBuffer newmemoryBuffer;
 
 	public ReadSocketThread(MemoryBuffer memoryBuffer, int port) {
 		this.port = port;
 		this.memoryBuffer = memoryBuffer;
+		queue = new ConcurrentLinkedQueue<String>();
+		this.stop = true;
+	}
+
+
+	public ReadSocketThread(NewMemoryBuffer memoryBuffer, int port) {
+		this.port = port;
+		this.newmemoryBuffer = memoryBuffer;
 		queue = new ConcurrentLinkedQueue<String>();
 		this.stop = true;
 	}
@@ -47,8 +54,8 @@ public class ReadSocketThread extends Thread {
 			while (this.stop) {
 				if (netClient.getIn() != null) {
 					if ((charsRead = netClient.getIn().read(buffer)) != -1) {
-	
-						memoryBuffer.addToFifo(buffer, charsRead);
+						if(memoryBuffer == null){newmemoryBuffer.addToFifo(buffer, charsRead);}else{
+						memoryBuffer.addToFifo(buffer, charsRead);}
 						try {
 							Thread.sleep(0, 10);
 						} catch (InterruptedException e) {
