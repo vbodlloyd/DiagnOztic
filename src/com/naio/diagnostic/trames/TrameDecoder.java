@@ -24,6 +24,8 @@ public class TrameDecoder {
 			return new GyroTrame(pollFifo);
 		case Config.ID_LOG:
 			return new LogTrame(pollFifo);
+		case Config.ID_ODO:
+			return new OdoTrame(pollFifo);
 		case Config.ID_MOTORS:
 		default:
 			break;

@@ -112,6 +112,9 @@ public class NewMemoryBuffer {
 		case (byte) Config.ID_LOG:
 			maxPacketLenght = 2048;
 			break;
+		case (byte) Config.ID_ODO:
+			maxPacketLenght = 4;
+			break;
 		/*
 		 * case (byte)PacketIds.WatchDogPacketId: maxPacketLenght = (uint)32;
 		 * break;

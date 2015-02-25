@@ -11,10 +11,18 @@
         android:layout_height="240px"
         android:background="#000000" />
 
+   
+
     <ImageView
         android:id="@+id/imageview_r"
         android:layout_width="320px"
         android:layout_height="240px"
         android:background="#000000" />
+    
+     <TextView
+        android:id="@+id/odo_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
 
 </LinearLayout>

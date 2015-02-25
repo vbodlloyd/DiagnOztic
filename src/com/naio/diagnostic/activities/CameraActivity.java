@@ -7,10 +7,12 @@ import com.naio.diagnostic.R;
 import com.naio.diagnostic.threads.ReadSocketThread;
 
 import com.naio.diagnostic.trames.LogTrame;
+import com.naio.diagnostic.trames.OdoTrame;
 import com.naio.diagnostic.trames.TrameDecoder;
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.MemoryBuffer;
+import com.naio.diagnostic.utils.NewMemoryBuffer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +32,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 public class CameraActivity extends FragmentActivity {
 	private static final int MILLISECONDS_RUNNABLE = 64; // 64 for 15fps
@@ -53,6 +56,12 @@ public class CameraActivity extends FragmentActivity {
 
 	private ImageView imageview_r;
 
+	private NewMemoryBuffer memoryBufferOdo;
+
+	private ReadSocketThread readSocketThreadOdo;
+
+	private TextView odo_display;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -75,6 +84,7 @@ public class CameraActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			nbrImage = 0;
+			odo_display = (TextView) findViewById(R.id.odo_text);
 			imageview = (ImageView) findViewById(R.id.imageview);
 			imageview_r = (ImageView) findViewById(R.id.imageview_r);
 			imageview.setOnClickListener(new OnClickListener() {
@@ -133,15 +143,19 @@ public class CameraActivity extends FragmentActivity {
 			trameDecoder = new TrameDecoder();
 
 			memoryBufferLog = new MemoryBuffer();
+			memoryBufferOdo = new NewMemoryBuffer();
 
 			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
 					Config.PORT_LOG);
+			readSocketThreadOdo = new ReadSocketThread(memoryBufferOdo,
+					Config.PORT_ODO);
 
 			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 			readSocketThreadLog.start();
+			readSocketThreadOdo.start();
 
 			handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
 		}
@@ -153,13 +167,25 @@ public class CameraActivity extends FragmentActivity {
 		// DataManager.getInstance().write_in_file(this);
 
 		readSocketThreadLog.setStop(false);
+		readSocketThreadOdo.setStop(false);
+		handler.removeCallbacks(runnable);
 
 	}
 
 	private void read_the_queue() {
 
 		display_image();
+		display_odo();
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
+	}
+
+	private void display_odo() {
+		OdoTrame odo = (OdoTrame) trameDecoder.decode(memoryBufferOdo
+				.getPollFifo());
+		if(odo != null){
+			
+		odo_display.setText(odo.show());}
+		
 	}
 
 	private void display_image() {

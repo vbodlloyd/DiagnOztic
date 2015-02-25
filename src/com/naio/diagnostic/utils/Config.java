@@ -11,10 +11,10 @@ public class Config {
 	public static final int PORT_LOG = 4339;
 	public static final int PORT_MOTORS = 3331;
 	public static final int PORT_REMOTE = 3338;
-	public static final int PORT_ACCELERO = 5334;
-	public static final int PORT_MAGNETO = 5337;
-	public static final int PORT_GYRO = 5331;
-	public static final int PORT_ODO = 5338;
+	public static final int PORT_ACCELERO = 3334;
+	public static final int PORT_MAGNETO = 3337;
+	public static final int PORT_GYRO = 3331;
+	public static final int PORT_ODO = 3335;
 	public static final int PORT_ACTUATOR = 3345;
 	public static final int PORT_SCREEN = 0000;
 	public static final int PORT_LED = 0001;
