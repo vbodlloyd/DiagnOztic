@@ -2,7 +2,8 @@ package com.naio.diagnostic.utils;
 
 public class Config {
 
-	public static final String HOST = "10.42.0.1";//"192.168.1.111";//"10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
+	public static final String HOST = "10.42.0.1";//"192.168.1.110";////"192.168.1.111";//"10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
+	public static final String HOST2 = "192.168.1.149";
 
 	public static final int PORT_GPS = 3334;
 	public static final int PORT_LIDAR = 3337;

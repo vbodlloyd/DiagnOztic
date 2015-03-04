@@ -5,6 +5,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.tileprovider.IRegisterReceiver;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.modules.GEMFFileArchive;
+import org.osmdroid.tileprovider.modules.MapTileDownloader;
+import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
+import org.osmdroid.tileprovider.modules.MapTileFilesystemProvider;
+import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
+import org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck;
+import org.osmdroid.tileprovider.modules.TileWriter;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.views.MapView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -30,6 +45,7 @@ import com.naio.views.AnalogueView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -46,6 +62,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class LidarGPSMotorsActivity extends FragmentActivity {
@@ -58,6 +75,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private Handler handler = new Handler();
 	private SendSocketThread sendSocketThreadMotors;
 	private GoogleMap map;
+	private MapView maporg;
 	private ReadSocketThread readSocketThreadMap;
 	private NewMemoryBuffer memoryBufferMap;
 	private boolean firstTimeDisplayTheMap;
@@ -69,9 +87,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	};
 
 	private NewMemoryBuffer memoryBufferLog;
-
 	private ReadSocketThread readSocketThreadLog;
-
 	private SendSocketThread sendSocketThreadActuators;
 
 	@Override
@@ -108,7 +124,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
 					Config.PORT_LOG);
 			sendSocketThreadMotors = new SendSocketThread(Config.PORT_MOTORS);
-			sendSocketThreadActuators = new SendSocketThread(Config.PORT_ACTUATOR);
+			sendSocketThreadActuators = new SendSocketThread(
+					Config.PORT_ACTUATOR);
 			DataManager.getInstance().setPoints_position_oz("");
 			getWindow()
 					.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -120,8 +137,28 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					.commit();
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map_frag)).getMap();
+
+			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 			set_the_analogueView();
+			set_the_dpadView();
 			set_the_actuator_button();
+			Button changeDisplay = (Button) findViewById(R.id.changePad);
+			changeDisplay.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
+					LinearLayout dpadview = (LinearLayout) findViewById(R.id.dpadview);
+					if (analView.getVisibility() == View.GONE) {
+						analView.setVisibility(View.VISIBLE);
+						dpadview.setVisibility(View.GONE);
+					} else {
+						analView.setVisibility(View.GONE);
+						dpadview.setVisibility(View.VISIBLE);
+					}
+
+				}
+			});
 
 			// start the threads
 			readSocketThreadLidar.start();
@@ -139,15 +176,15 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		super.onBackPressed();
 		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
-		
+
 		readSocketThreadMap.setStop(false);
-		
+
 		readSocketThreadLog.setStop(false);
-		
+
 		sendSocketThreadMotors.setStop(false);
-		
+
 		sendSocketThreadActuators.setStop(false);
-		
+
 		handler.removeCallbacks(runnable);
 	}
 
@@ -161,19 +198,22 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 	private void display_gps_info() {
 		GPSTrame gps = (GPSTrame) trameDecoder.decode(memoryBufferMap
 				.getPollFifo());
-		
+
 		if (gps != null) {
-		
+
 			TextView altitude = (TextView) findViewById(R.id.textview_altitude);
 			altitude.setText("Altitude:" + gps.getAlt() + " m");
 			TextView vitesse = (TextView) findViewById(R.id.textview_groundspeed);
 			vitesse.setText("Vitesse:" + gps.getGroundSpeed() + " km/h");
-			DataManager.getInstance().write_in_log("alt and vitesse : "+gps.getAlt()+"---"+gps.getGroundSpeed()+"\n");
+			DataManager.getInstance().write_in_log(
+					"alt and vitesse : " + gps.getAlt() + "---"
+							+ gps.getGroundSpeed() + "\n");
 			map.clear();
 			LatLng latlng = new LatLng(gps.getLat(), gps.getLon());
 			PolylineOptions option = new PolylineOptions().width(5)
 					.color(Color.BLUE).addAll(listPointMap);
 			map.addPolyline(option);
+
 			listPointMap.add(latlng);
 			DataManager.getInstance().addPoints_position_oz(
 					latlng.latitude + "#" + latlng.longitude + "%");
@@ -210,6 +250,134 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				sendSocketThreadMotors));
 	}
 
+	private void set_the_dpadView() {
+		ImageView dpaddown = (ImageView) findViewById(R.id.dpad_down);
+		ImageView dpadup = (ImageView) findViewById(R.id.dpad_up);
+		ImageView dpadleft = (ImageView) findViewById(R.id.dpad_left);
+		ImageView dpadright = (ImageView) findViewById(R.id.dpad_right);
+		dpaddown.setOnTouchListener(new View.OnTouchListener() {
+
+		    private Handler mHandler;
+
+		    @Override public boolean onTouch(View v, MotionEvent event) {
+		        switch(event.getAction()) {
+		        case MotionEvent.ACTION_DOWN:
+		            if (mHandler != null) return true;
+		            mHandler = new Handler();
+		            mHandler.postDelayed(mAction, 20);
+		            break;
+		        case MotionEvent.ACTION_UP:
+		            if (mHandler == null) return true;
+		            mHandler.removeCallbacks(mAction);
+		            mHandler = null;
+		            break;
+		        }
+		        return false;
+		    }
+
+		    Runnable mAction = new Runnable() {
+		        @Override public void run() {
+		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+							-127, -127, 0, 0, 0, 0 };
+					sendSocketThreadMotors.setBytes(b);
+		            mHandler.postDelayed(this, 20);
+		        }
+		    };
+		});
+
+
+		dpadup.setOnTouchListener(new View.OnTouchListener() {
+
+		    private Handler mHandler;
+
+		    @Override public boolean onTouch(View v, MotionEvent event) {
+		        switch(event.getAction()) {
+		        case MotionEvent.ACTION_DOWN:
+		            if (mHandler != null) return true;
+		            mHandler = new Handler();
+		            mHandler.postDelayed(mAction, 20);
+		            break;
+		        case MotionEvent.ACTION_UP:
+		            if (mHandler == null) return true;
+		            mHandler.removeCallbacks(mAction);
+		            mHandler = null;
+		            break;
+		        }
+		        return false;
+		    }
+
+		    Runnable mAction = new Runnable() {
+		        @Override public void run() {
+		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+							127, 127, 0, 0, 0, 0 };
+					sendSocketThreadMotors.setBytes(b);
+		            mHandler.postDelayed(this, 20);
+		        }
+		    };
+		});
+
+		dpadleft.setOnTouchListener(new View.OnTouchListener() {
+
+		    private Handler mHandler;
+
+		    @Override public boolean onTouch(View v, MotionEvent event) {
+		        switch(event.getAction()) {
+		        case MotionEvent.ACTION_DOWN:
+		            if (mHandler != null) return true;
+		            mHandler = new Handler();
+		            mHandler.postDelayed(mAction, 20);
+		            break;
+		        case MotionEvent.ACTION_UP:
+		            if (mHandler == null) return true;
+		            mHandler.removeCallbacks(mAction);
+		            mHandler = null;
+		            break;
+		        }
+		        return false;
+		    }
+
+		    Runnable mAction = new Runnable() {
+		        @Override public void run() {
+		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+							-127, 127, 0, 0, 0, 0 };
+					sendSocketThreadMotors.setBytes(b);
+		            mHandler.postDelayed(this, 20);
+		        }
+		    };
+		});
+
+		dpadright.setOnTouchListener(new View.OnTouchListener() {
+
+		    private Handler mHandler;
+
+		    @Override public boolean onTouch(View v, MotionEvent event) {
+		        switch(event.getAction()) {
+		        case MotionEvent.ACTION_DOWN:
+		            if (mHandler != null) return true;
+		            mHandler = new Handler();
+		            mHandler.postDelayed(mAction, 20);
+		            break;
+		        case MotionEvent.ACTION_UP:
+		            if (mHandler == null) return true;
+		            mHandler.removeCallbacks(mAction);
+		            mHandler = null;
+		            break;
+		        }
+		        return false;
+		    }
+
+		    Runnable mAction = new Runnable() {
+		        @Override public void run() {
+		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+							127, -127, 0, 0, 0, 0 };
+					sendSocketThreadMotors.setBytes(b);
+		            mHandler.postDelayed(this, 20);
+		        }
+		    };
+		});
+
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -240,9 +408,8 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		Button btn = (Button) findViewById(R.id.actuator_down);
 		Button btn2 = (Button) findViewById(R.id.actuator_up);
 		btn.setOnTouchListener(new OnTouchListener() {
-			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0, 0, 0, 2,
-					0, 0, 0, 0 };
-		
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0,
+					0, 0, 2, 0, 0, 0, 0 };
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -256,14 +423,12 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				return false;
 			}
 
-			
-
 		});
 
 		btn2.setOnTouchListener(new OnTouchListener() {
-	
-			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0, 0, 0, 1,
-					0, 0, 0, 0 };
+
+			byte[] byteDown = new byte[] { 78, 65, 73, 79, 48, 49, 0xf, 1, 0,
+					0, 0, 1, 0, 0, 0, 0 };
 			private Handler mHandler;
 
 			@Override
@@ -271,16 +436,14 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 				switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
 					sendSocketThreadActuators.setBytes(byteDown);
-					
+
 					break;
 				case MotionEvent.ACTION_UP:
-	
+
 					break;
 				}
 				return false;
 			}
-
-			
 
 		});
 	}

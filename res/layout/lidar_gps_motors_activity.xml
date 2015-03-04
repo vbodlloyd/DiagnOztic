@@ -52,6 +52,14 @@
                 android:layout_height="fill_parent"
                 class="com.google.android.gms.maps.MapFragment" />
 
+            <!--
+                 <org.osmdroid.views.MapView
+                android:id="@+id/mapview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tilesource="Mapnik" />
+            -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,12 +100,111 @@
             android:layout_height="fill_parent"
             android:layout_weight="1" >
 
+            
             <com.naio.views.AnalogueView
                 android:id="@+id/analogueView1"
                 android:layout_width="400px"
                 android:layout_height="400px"
                 android:layout_gravity="center" />
+            
 
+            <LinearLayout
+                android:id="@+id/dpadview"
+                android:visibility="gone"
+                android:layout_width="500px"
+                android:layout_height="500px"
+                android:layout_gravity="center"
+                android:orientation="horizontal" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1" >
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/dpad_left"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:rotation="180"
+                        android:clickable="true"
+                        android:src="@drawable/pointer"
+                        />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1" >
+                    </TextView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:id="@+id/dpad_up"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:rotation="-90"
+                        android:clickable="true"
+                        android:src="@drawable/pointer" />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1" >
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/dpad_down"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:rotation="90"
+                        android:clickable="true"
+                        android:src="@drawable/pointer" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1" >
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/dpad_right"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:src="@drawable/pointer" />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1" >
+                    </TextView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="200px"
@@ -126,6 +233,7 @@
                 android:layout_gravity="bottom|center_horizontal"
                 android:rotation="90"
                 android:src="@drawable/fleche" />
+            -->
 
             <TextView
                 android:layout_width="wrap_content"
@@ -157,6 +265,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|left"
                 android:text="^" />
+            
+            <Button
+                android:id="@+id/changePad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|right"
+                android:text="Change pad" />
         </FrameLayout>
     </LinearLayout>
 

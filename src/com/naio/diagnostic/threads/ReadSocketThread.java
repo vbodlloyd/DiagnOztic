@@ -47,7 +47,10 @@ public class ReadSocketThread extends Thread {
 	public void run() {
 		int charsRead = 0;
 		byte[] buffer = new byte[Config.BUFFER_SIZE];
-		netClient = new NetClient(Config.HOST, port, "0");
+		if(port == Config.PORT_LOG)
+			netClient = new NetClient(Config.HOST2, port, "0");
+		else
+			netClient = new NetClient(Config.HOST, port, "0");
 		netClient.connectWithServer();
 		int total = 0;
 		try {

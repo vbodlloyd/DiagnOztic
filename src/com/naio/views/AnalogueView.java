@@ -151,7 +151,7 @@ public class AnalogueView extends View {
         xb *=2.5;
         yb *=-2.5;
         
-
+        
         if(moveListener != null)
             if(r == w/2-RADIUS)
                 moveListener.onMaxMoveInDirection((int)xb,(int)yb);
