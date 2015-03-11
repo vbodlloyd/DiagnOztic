@@ -40,7 +40,7 @@ public class NewMemoryBuffer {
 	public void addToFifo(byte[] bytes, int bytesRead) {
 		
 		//byte[] bytes = bytess.clone();
-		//Log.e("index","iamhere");
+		//Log.e("index","bytesRead   " + bytesRead);
 		try {
 			int idx = 0;
 			
@@ -49,6 +49,8 @@ public class NewMemoryBuffer {
 				//Log.e("index",""+idx + "  read:"+bytesRead);
 				// TEST PROTOCOL VERSION
 				if (this.CurrentBufferPos == 5) {
+					//Log.e("sizeTot","--"+this.WorkingBuffer[0]+"--"+this.WorkingBuffer[1]+"--"+this.WorkingBuffer[2]+"--"+this.WorkingBuffer[3]+"--"+this.WorkingBuffer[4]+"--"+this.WorkingBuffer[5]+"--"+this.WorkingBuffer[6]+"---"+this.WorkingBuffer[7]+"--" + this.WorkingBuffer[8]+"--"+this.WorkingBuffer[9]+"--"+this.WorkingBuffer[10]+"--"+this.WorkingBuffer[11]+"--"+this.WorkingBuffer[12]+"--"+this.WorkingBuffer[13]);
+					
 					if (!ValidateProtocol(0, this.WorkingBuffer)) {
 						for (int shiftIdx = 0; shiftIdx <= this.CurrentBufferPos; shiftIdx++) {
 							this.WorkingBuffer[shiftIdx] = this.WorkingBuffer[shiftIdx + 1];
@@ -61,7 +63,6 @@ public class NewMemoryBuffer {
 				else if (this.CurrentBufferPos == 6) {
 					// NOTHING
 					byte packetId = GetPacketId(0, this.WorkingBuffer);
-
 					this.CurrentMaxPacketSize = GetMaxPacketLength(packetId);
 				}
 				//
@@ -70,7 +71,10 @@ public class NewMemoryBuffer {
 							this.WorkingBuffer[8], this.WorkingBuffer[9],
 							this.WorkingBuffer[10] };
 					this.CurrentPacketSize = ByteBuffer.wrap(size).getInt();
-
+					/*this.WorkingBuffer[12]=0x1;
+					this.WorkingBuffer[13]=0x2;*/
+					//Log.e("sizeTot",""+this.CurrentPacketSize + "and the fucking bytes :"+"--"+this.WorkingBuffer[0]+"--"+this.WorkingBuffer[1]+"--"+this.WorkingBuffer[2]+"--"+this.WorkingBuffer[3]+"--"+this.WorkingBuffer[4]+"--"+this.WorkingBuffer[5]+"--"+this.WorkingBuffer[6]+"---"+this.WorkingBuffer[7]+"--" + this.WorkingBuffer[8]+"--"+this.WorkingBuffer[9]+"--"+this.WorkingBuffer[10]+"--"+this.WorkingBuffer[11]+"--"+this.WorkingBuffer[12]+"--"+this.WorkingBuffer[13]);
+					
 					// TODO:Trouble !!!!!!
 					if (this.CurrentPacketSize > this.CurrentMaxPacketSize) {
 						this.CurrentPacketSize = this.CurrentMaxPacketSize;
@@ -78,11 +82,12 @@ public class NewMemoryBuffer {
 				}
 				// ALL PACKET RECEIVED TRY TO DECODE
 				else if (this.CurrentBufferPos == Config.LENGHT_FULL_HEADER
-						+ this.CurrentPacketSize + Config.LENGHT_CHECKSUM - 1) {
+						+ this.CurrentPacketSize + Config.LENGHT_CHECKSUM -1) {
+				/*	Log.e("sizeTot",""+(Config.LENGHT_FULL_HEADER
+							+ this.CurrentPacketSize + Config.LENGHT_CHECKSUM )+ "----"+this.CurrentPacketSize);*/
 					fifo.offer(Arrays.copyOfRange(this.WorkingBuffer, 0,
 							this.CurrentBufferPos));
-					DataManager.getInstance().write_in_log("paquet finish : "+ this.CurrentBufferPos);
-
+					//DataManager.getInstance().write_in_log("paquet finish : "+ this.CurrentBufferPos);
 					this.CurrentBufferPos = -1;
 				}
 
@@ -92,7 +97,6 @@ public class NewMemoryBuffer {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
 	}
 
 	public byte[] getPollFifo() {
@@ -110,7 +114,7 @@ public class NewMemoryBuffer {
 			maxPacketLenght = 2;
 			break;
 		case (byte) Config.ID_LOG:
-			maxPacketLenght = 2048;
+			maxPacketLenght = 360963;
 			break;
 		case (byte) Config.ID_ODO:
 			maxPacketLenght = 4;
@@ -162,8 +166,6 @@ public class NewMemoryBuffer {
 	}
 
 	private static Boolean ValidateProtocol(int start, byte[] buffer) {
-		Boolean isValid = false;
-
 		if (buffer.length > (5 + start)) {
 			int mem = 0, idx = 0;
 			Byte[] receiveProtocolVersion = new Byte[] { buffer[0 + start],
@@ -178,6 +180,9 @@ public class NewMemoryBuffer {
 					mem = 3;
 				} else if (bit == 79 && mem == 3) {
 					mem = 4;
+				} else if (bit == 48 && mem == 4) {
+					mem = 5;
+				} else if (bit == 49 && mem == 5) {
 					return true;
 				} else {
 					mem = 0;
@@ -187,7 +192,15 @@ public class NewMemoryBuffer {
 
 		}
 
-		return isValid;
+		return false;
+	}
+
+	public byte[] getPollAntepenultiemeFifo() {
+	
+		for (int i = 0; i < fifo.size() - 2; i++) {
+			fifo.poll();
+		}
+		return fifo.peek();
 	}
 
 }

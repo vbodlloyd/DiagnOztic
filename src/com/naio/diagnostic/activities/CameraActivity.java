@@ -1,5 +1,7 @@
 package com.naio.diagnostic.activities;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.naio.diagnostic.R;
@@ -13,10 +15,13 @@ import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.MemoryBuffer;
 import com.naio.diagnostic.utils.NewMemoryBuffer;
+import com.naio.opengl.OpenGLRenderer;
+import com.naio.opengl.SimplePlane;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -26,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 
@@ -47,30 +53,67 @@ public class CameraActivity extends FragmentActivity {
 		}
 	};
 
-	private MemoryBuffer memoryBufferLog;
+	private NewMemoryBuffer memoryBufferLog;
 	private ReadSocketThread readSocketThreadLog;
-
 	private ImageView imageview;
-
 	private int nbrImage;
-
 	private ImageView imageview_r;
-
 	private NewMemoryBuffer memoryBufferOdo;
-
 	private ReadSocketThread readSocketThreadOdo;
-
 	private TextView odo_display;
+	private ArrayList<SimplePlane> arrayPoints = new ArrayList<SimplePlane>();
+	private static float scaleX = 3.5f;
+	private static float scaleY = 2.5f;
+	private float rapScaleX;
+	private float rapScaleY;
+
+	private SimplePlane plane;
+
+	private OpenGLRenderer renderer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		arrayPoints = new ArrayList<SimplePlane>();
 		// change the color of the action bar
-		getActionBar().setBackgroundDrawable(
-				getResources().getDrawable(R.drawable.form));
-		setContentView(R.layout.camera_activity);
+		/*
+		 * getActionBar().setBackgroundDrawable(
+		 * getResources().getDrawable(R.drawable.form));
+		 */
+		// Remove the title bar from the window.
 
+		// Make the windows into full screen mode.
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		//setContentView(R.layout.camera_activity);
+		// Create a OpenGL view.
+		//GLSurfaceView view = (GLSurfaceView) findViewById(R.id.opengl_view);
+		GLSurfaceView view = new GLSurfaceView(this);
+
+		// Creating and attaching the renderer.
+		renderer = new OpenGLRenderer();
+		view.setRenderer(renderer);
+		 setContentView(view);
+
+		// Create a new plane.
+		plane = new SimplePlane(1, 1);
+		plane.sx = scaleX;
+		plane.sy = scaleY;
+		plane.z = 0.0f;
+		
+		rapScaleX = scaleX / 2.5f;
+		rapScaleY = scaleY / 2.5f;
+		
+		// Load the texture.
+		plane.loadBitmap(BitmapFactory.decodeResource(getResources(),
+						R.drawable.fleche));
+
+		// Add the plane to the renderer.
+		renderer.addMesh(plane);
+				
 		getSupportFragmentManager().addOnBackStackChangedListener(
 				new OnBackStackChangedListener() {
 					public void onBackStackChanged() {
@@ -83,66 +126,48 @@ public class CameraActivity extends FragmentActivity {
 				});
 
 		if (savedInstanceState == null) {
-			nbrImage = 0;
+			/*nbrImage = 0;
 			odo_display = (TextView) findViewById(R.id.odo_text);
 			imageview = (ImageView) findViewById(R.id.imageview);
-			imageview_r = (ImageView) findViewById(R.id.imageview_r);
-			imageview.setOnClickListener(new OnClickListener() {
-				boolean fullsize = false;
-
-				@Override
-				public void onClick(View v) {
-
-					if (!fullsize) {
-						v.startAnimation(AnimationUtils.loadAnimation(
-								v.getContext(), R.animator.animation_imageview));
-						imageview
-								.setLayoutParams(new LinearLayout.LayoutParams(
-										LayoutParams.MATCH_PARENT,
-										LayoutParams.MATCH_PARENT));
-
-					} else {
-						v.startAnimation(AnimationUtils.loadAnimation(
-								v.getContext(),
-								R.animator.animation_imageview_return));
-						imageview
-								.setLayoutParams(new LinearLayout.LayoutParams(
-										320, 240));
-
-					}
-					fullsize = !fullsize;
-				}
-			});
-			
-			imageview_r.setOnClickListener(new OnClickListener() {
-				boolean fullsize = false;
-
-				@Override
-				public void onClick(View v) {
-
-					if (!fullsize) {
-						v.startAnimation(AnimationUtils.loadAnimation(
-								v.getContext(), R.animator.animation_imageview));
-						imageview_r
-								.setLayoutParams(new LinearLayout.LayoutParams(
-										LayoutParams.MATCH_PARENT,
-										LayoutParams.MATCH_PARENT));
-
-					} else {
-						v.startAnimation(AnimationUtils.loadAnimation(
-								v.getContext(),
-								R.animator.animation_imageview_return));
-						imageview_r
-								.setLayoutParams(new LinearLayout.LayoutParams(
-										320, 240));
-
-					}
-					fullsize = !fullsize;
-				}
-			});
+			imageview_r = (ImageView) findViewById(R.id.imageview_r);*/
+			/*
+			 * imageview.setOnClickListener(new OnClickListener() { boolean
+			 * fullsize = false;
+			 * 
+			 * @Override public void onClick(View v) {
+			 * 
+			 * if (!fullsize) { v.startAnimation(AnimationUtils.loadAnimation(
+			 * v.getContext(), R.animator.animation_imageview)); imageview
+			 * .setLayoutParams(new LinearLayout.LayoutParams(
+			 * LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			 * 
+			 * } else { v.startAnimation(AnimationUtils.loadAnimation(
+			 * v.getContext(), R.animator.animation_imageview_return));
+			 * imageview .setLayoutParams(new LinearLayout.LayoutParams( 320,
+			 * 240));
+			 * 
+			 * } fullsize = !fullsize; } });
+			 * 
+			 * imageview_r.setOnClickListener(new OnClickListener() { boolean
+			 * fullsize = false;
+			 * 
+			 * @Override public void onClick(View v) {
+			 * 
+			 * if (!fullsize) { v.startAnimation(AnimationUtils.loadAnimation(
+			 * v.getContext(), R.animator.animation_imageview)); imageview_r
+			 * .setLayoutParams(new LinearLayout.LayoutParams(
+			 * LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+			 * 
+			 * } else { v.startAnimation(AnimationUtils.loadAnimation(
+			 * v.getContext(), R.animator.animation_imageview_return));
+			 * imageview_r .setLayoutParams(new LinearLayout.LayoutParams( 320,
+			 * 240));
+			 * 
+			 * } fullsize = !fullsize; } });
+			 */
 			trameDecoder = new TrameDecoder();
 
-			memoryBufferLog = new MemoryBuffer();
+			memoryBufferLog = new NewMemoryBuffer();
 			memoryBufferOdo = new NewMemoryBuffer();
 
 			readSocketThreadLog = new ReadSocketThread(memoryBufferLog,
@@ -182,30 +207,108 @@ public class CameraActivity extends FragmentActivity {
 	private void display_odo() {
 		OdoTrame odo = (OdoTrame) trameDecoder.decode(memoryBufferOdo
 				.getPollFifo());
-		if(odo != null){
-			
-		odo_display.setText(odo.show());}
-		
+		if (odo != null) {
+			odo_display.setText(odo.show());
+		}
+
 	}
 
 	private void display_image() {
+		for(int waz = 0; waz<2;waz++){
+			if(waz ==0){
 		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
-				.getPollFifo());
+				.getPollAntepenultiemeFifo());
+			}
+			if(waz ==1){
+		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
+						.getPollFifo());	
+			}
 		byte[] data = DataManager.getInstance().getPollFifoImage();
 		if (data == null)
 			return;
+		Log.e("sizetwo",""+ data.length);
+		byte[] dataf = Arrays.copyOfRange(data,
+					Config.LENGHT_FULL_HEADER + 3, data.length-Config.LENGHT_CHECKSUM);
+		if(data[Config.LENGHT_FULL_HEADER+2] == 1){
+			Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
+			if (bm == null)
+				return;
 
-		byte[] dataf = Arrays.copyOfRange(data, 2, data.length);
-		Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
-		Log.e("typeLidarGps", "nbr image :" + nbrImage++);
+			plane.loadBitmap(bm);
+		}else{//greyscale here
+			byte [] Bits = new byte[752*480*4]; //That's where the RGBA array goes.
+			Log.e("size", "++"+ dataf.length +"   and   " + 752*480);
+			int i;
+			for(i=0;i<dataf.length;i++)
+			{
+			    Bits[i*4] =
+			        Bits[i*4+1] =
+			        Bits[i*4+2] = (byte) dataf[i]; //Invert the source bits
+			    Bits[i*4+3] = -1;//0xff, that's the alpha.
+			}
 
-		if (data[0] == 0) {
-			imageview.setImageBitmap(bm);
-		} else {
+			//Now put these nice RGBA pixels into a Bitmap object
 
-			imageview_r.setImageBitmap(bm);
+			Bitmap bm = Bitmap.createBitmap(752, 480, Bitmap.Config.ARGB_8888);
+			bm.copyPixelsFromBuffer(ByteBuffer.wrap(Bits));
+			plane.loadBitmap(bm);
 		}
 
+			/*if (data[Config.LENGHT_FULL_HEADER + 1] == 0) {
+				imageview.setImageBitmap(bm);
+			} else {
+
+				imageview_r.setImageBitmap(bm);
+
+		}*/
+		ArrayList<float[]> dataPoints2d = DataManager.getInstance().getPollFifoPoints2D();
+		if(dataPoints2d == null)
+			return;
+		float w = dataPoints2d.get(0)[0];
+		float h = dataPoints2d.get(0)[1];
+		float xa=0,ya=0;
+		for( int i =1; i < dataPoints2d.size();i++){
+			float x = dataPoints2d.get(i)[0];
+			float y = dataPoints2d.get(i)[1];
+		
+			
+			if(arrayPoints.size() <= i-1 ){
+				SimplePlane dott = new SimplePlane(0.1f, 0.1f);
+				dott.z = 0.01f;
+				if(2*x/w -1>=0)
+					dott.x = 1.21f*rapScaleX*((2*(x+10)/w) - 1) ;
+				else
+					dott.x = 1.21f*rapScaleX*((2*(x-10)/w) - 1) ;
+				if(2*y/h -1>=0)
+					dott.y = 1.2f*rapScaleY*((2*(y+10)/h) - 1) ;
+				else
+					dott.y = 1.2f*rapScaleY*((2*(y-10)/h) - 1) ;
+				dott.sx = 0.0625f;
+				dott.sy = 0.0625f;
+				/*dot.sx = 1/10;
+				dot.sy = 1/10;*/
+				dott.loadBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.end_point));
+				arrayPoints.add(dott);
+				renderer.addMesh(dott);
+			}
+			else{
+				if(2*x/w -1>=0)
+					arrayPoints.get(i-1).x = 1.21f*rapScaleX*((2*(x+10)/w) - 1) ;
+				else
+					arrayPoints.get(i-1).x = 1.21f*rapScaleX*((2*(x-10)/w) - 1) ;
+				if(2*y/h -1>=0)
+					arrayPoints.get(i-1).y = 1.20f*rapScaleY*((2*(y+10)/h) - 1) ;
+				else
+					arrayPoints.get(i-1).y = 1.20f*rapScaleY*((2*(y-10)/h) - 1) ;
+			}
+			if(i-1 <= arrayPoints.size() && i==(dataPoints2d.size()-1) ){
+				int s = arrayPoints.size();
+				for (int j=(i-1) ; j < s ; j++){
+					arrayPoints.remove(j);
+				}
+			}
+		}
+		}
 	}
 
 	@Override

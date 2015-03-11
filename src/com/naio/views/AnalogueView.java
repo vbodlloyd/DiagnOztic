@@ -115,17 +115,14 @@ public class AnalogueView extends View {
         case MotionEvent.ACTION_DOWN :
         case MotionEvent.ACTION_MOVE :
             updatePosition(event);
-            break;
-        
+            break;    
         case MotionEvent.ACTION_UP :
             toDo = 1; 
             center(); 
             break;
-        default :break;
-
+        default :
+        	break;
         }
-       
-
         return true;
     }
 

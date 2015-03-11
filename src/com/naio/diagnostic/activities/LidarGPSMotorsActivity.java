@@ -26,6 +26,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.naio.diagnostic.R;
 import com.naio.diagnostic.opengl.OpenGLES20Fragment;
 import com.naio.diagnostic.threads.ReadSocketThread;
@@ -39,6 +41,7 @@ import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.MemoryBuffer;
 import com.naio.diagnostic.utils.MyMoveListenerForAnalogueView;
 import com.naio.diagnostic.utils.NewMemoryBuffer;
+import com.naio.diagnostic.utils.OnlineTileProvider;
 import com.naio.opengl.MyGLSurfaceView;
 import com.naio.views.AnalogueView;
 
@@ -139,6 +142,7 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					R.id.map_frag)).getMap();
 
 			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			
 			set_the_analogueView();
 			set_the_dpadView();
 			set_the_actuator_button();
@@ -176,15 +180,10 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 		super.onBackPressed();
 		DataManager.getInstance().write_in_file(this);
 		readSocketThreadLidar.setStop(false);
-
 		readSocketThreadMap.setStop(false);
-
 		readSocketThreadLog.setStop(false);
-
 		sendSocketThreadMotors.setStop(false);
-
 		sendSocketThreadActuators.setStop(false);
-
 		handler.removeCallbacks(runnable);
 	}
 

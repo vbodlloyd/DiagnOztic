@@ -60,7 +60,7 @@ public class NetClient {
 		return in;
 	}
 
-	private void disConnectWithServer() {
+	public void disConnectWithServer() {
         if (socket != null) {
             if (socket.isConnected()) {
                 try {
@@ -73,5 +73,15 @@ public class NetClient {
             }
         }
     }
+
+	public void close() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 }

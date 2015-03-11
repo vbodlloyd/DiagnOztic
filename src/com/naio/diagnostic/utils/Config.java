@@ -2,14 +2,14 @@ package com.naio.diagnostic.utils;
 
 public class Config {
 
-	public static final String HOST = "10.42.0.1";//"192.168.1.110";////"192.168.1.111";//"10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
+	public static final String HOST = "192.168.1.111";//"10.42.0.1";//"192.168.1.110";////"192.168.1.111";//"10.42.0.1";//debian/*"192.168.1.111";//joan*///"192.168.1.149";//moi//
 	public static final String HOST2 = "192.168.1.149";
 
 	public static final int PORT_GPS = 3334;
 	public static final int PORT_LIDAR = 3337;
 	public static final int PORT_WATCHDOG = 0002;
 	public static final int PORT_CAMERA = 0005;
-	public static final int PORT_LOG = 4339;
+	public static final int PORT_LOG = 3332;
 	public static final int PORT_MOTORS = 3331;
 	public static final int PORT_REMOTE = 3338;
 	public static final int PORT_ACCELERO = 3334;
@@ -69,6 +69,9 @@ public class Config {
 	public static final String FILE_SAVE_GPS = "bilan.naio";
 
 	public static final int LINES_SIZE_IN_BYTES = 16;
-	public static final int ID_BYTES_FOR_LINES = 2;
+	public static final int ID_BYTES_FOR_LOG = 2;
+	public static final int BYTES_SIZE_W_H = 4;
+	public static final int POINTS2D_SIZE_IN_BYTES = 8;
+	
 
 }
