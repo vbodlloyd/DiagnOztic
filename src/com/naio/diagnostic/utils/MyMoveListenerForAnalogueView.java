@@ -5,9 +5,21 @@ import com.naio.views.AnalogueView.OnMoveListener;
 
 public class MyMoveListenerForAnalogueView implements OnMoveListener {
 	private SendSocketThread sendSocketThreadMotors;
+	private byte left;
+	private byte right;
+	private static final Object lock = new Object();
 
 	public MyMoveListenerForAnalogueView(SendSocketThread sendSocketThreadMotors) {
 		this.sendSocketThreadMotors = sendSocketThreadMotors;
+	}
+
+	public void sendMotorsCommand() {
+		synchronized (lock) {
+
+			byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
+					left, right, 0, 0, 0, 0 };
+			sendSocketThreadMotors.setBytes(b);
+		}
 	}
 
 	@Override
@@ -52,9 +64,12 @@ public class MyMoveListenerForAnalogueView implements OnMoveListener {
 					ya = (byte) (padSpeed + bearing);
 			}
 		}
-		byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2, xa, ya,
-				0, 0, 0, 0 };
-		sendSocketThreadMotors.setBytes(b);
+		synchronized (lock) {
+
+			left = xa;
+			right = ya;
+		}
+
 	}
 
 	@Override
@@ -99,9 +114,11 @@ public class MyMoveListenerForAnalogueView implements OnMoveListener {
 					ya = (byte) (padSpeed + bearing);
 			}
 		}
-		byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2, xa, ya,
-				0, 0, 0, 0 };
-		sendSocketThreadMotors.setBytes(b);
+		synchronized (lock) {
+
+			left = xa;
+			right = ya;
+		}
 
 	}
 

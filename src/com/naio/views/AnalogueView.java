@@ -107,16 +107,23 @@ public class AnalogueView extends View {
     double distance(double x1 , double y1, double x2, double y2 ){
         return Math.sqrt(Math.pow(x1-x2, 2)+Math.pow(y1-y2, 2));
     }
-
+    Runnable mAction = new Runnable() {
+        @Override public void run() {
+            moveListener.sendMotorsCommand();
+            mHandler.postDelayed(this, 20);
+        }
+    };
     @Override
     public boolean onTouchEvent(MotionEvent event) {
    
         switch(event.getAction()){
         case MotionEvent.ACTION_DOWN :
+        	mHandler.postDelayed(mAction, 20);
         case MotionEvent.ACTION_MOVE :
             updatePosition(event);
             break;    
         case MotionEvent.ACTION_UP :
+        	mHandler.removeCallbacks(mAction);
             toDo = 1; 
             center(); 
             break;
@@ -165,5 +172,6 @@ public class AnalogueView extends View {
     public interface OnMoveListener{
         public void onHalfMoveInDirection(int x, int y);
         public void onMaxMoveInDirection(int x, int y);
+        public void sendMotorsCommand();
     }
 }

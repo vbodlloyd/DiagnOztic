@@ -37,7 +37,6 @@ public class SendSocketThread extends Thread {
 		netClient.connectWithServer();
 		while (stop) {
 			synchronized (lock1) {
-
 				try {
 					lock1.wait();
 					if (netClient.getOut() != null) {
@@ -46,10 +45,8 @@ public class SendSocketThread extends Thread {
 					} else
 						Thread.sleep(10, 0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
