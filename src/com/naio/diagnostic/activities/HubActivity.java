@@ -62,4 +62,10 @@ public class HubActivity extends Activity {
 		startActivity(intent);
 		overridePendingTransition(R.animator.animation4, R.animator.animation2);
 	}
+	
+	public void go_to_decision_activity(View v){
+		Intent intent = new Intent(this, DecisionIAActivity.class);
+		startActivity(intent);
+		overridePendingTransition(R.animator.animation5, R.animator.animation2);
+	}
 }

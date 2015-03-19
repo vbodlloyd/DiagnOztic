@@ -2,12 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.naio.diagnostic"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.1" >
 
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="19" />
-    <!-- Tell the system this app requires OpenGL ES 2.0. -->
 
     <permission
         android:name="com.naio.diagnostic.permission.MAPS_RECEIVE"
@@ -21,11 +20,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -35,31 +32,40 @@
         <activity
             android:name="com.naio.diagnostic.activities.OpenGLES20Activity"
             android:label="@string/app_name" >
-<!--             <intent-filter>
+
+            <!--
+                 <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name="com.naio.diagnostic.activities.LidarGPSMotorsActivity"
             android:label="@string/app_name" >
-<!--             <intent-filter>
+
+            <!--
+                 <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
-         <activity
+        <activity
             android:name="com.naio.diagnostic.activities.CameraActivity"
             android:label="@string/app_name" >
-<!--             <intent-filter>
+
+            <!--
+                 <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
-         <activity
+        <activity
             android:name="com.naio.diagnostic.activities.HubActivity"
             android:label="@string/app_name" >
             <intent-filter>
@@ -71,26 +77,10 @@
         <activity
             android:name="com.naio.diagnostic.activities.GoogleMapV2Activity"
             android:label="@string/app_name" >
-
-            <!--
-                 <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
-         <activity
-            android:name="com.naio.diagnostic.activities.BilanUtilisationActivity"
-            >
-
-            <!--
-                 <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
+        <activity android:name="com.naio.diagnostic.activities.BilanUtilisationActivity" >
+        </activity>
+        <activity android:name="com.naio.diagnostic.activities.DecisionIAActivity" >
         </activity>
 
         <meta-data
@@ -99,6 +89,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="6587000" />
+        <!-- <meta-data android:name="MAPBOX_MAPID" android:value="vbod.lggh6oln" /> -->
     </application>
 
 </manifest>

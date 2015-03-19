@@ -44,6 +44,7 @@
             android:layout_weight="1"
             android:background="@drawable/form_hub"
             android:clickable="true"
+            android:onClick="go_to_decision_activity"
             android:padding="5dp" >
 
             <ImageView

@@ -27,6 +27,21 @@ public class TrameDecoder {
 		case Config.ID_ODO:
 			return new OdoTrame(pollFifo);
 		case Config.ID_MOTORS:
+			break;
+		case Config.ID_REMOTE :
+			return new RemoteTrame(pollFifo);
+		case Config.ID_KEYPAD :
+			return new KeyPadTrame(pollFifo);
+		case Config.ID_SPEAKER :
+			return new SpeakerTrame(pollFifo);
+		case Config.ID_LED :
+			return new LedTrame(pollFifo);
+		case Config.ID_SCREEN :
+			return new ScreenTrame(pollFifo);
+		case Config.ID_MAGNETO :
+			return new MagnetoTrame(pollFifo);
+		case Config.ID_WATCHDOG :
+			return new WatchdogTrame(pollFifo);
 		default:
 			break;
 		}

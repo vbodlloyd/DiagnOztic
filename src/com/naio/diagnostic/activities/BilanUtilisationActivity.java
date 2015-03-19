@@ -150,7 +150,6 @@ public class BilanUtilisationActivity extends FragmentActivity {
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		overridePendingTransition(R.animator.animation_end2,
 				R.animator.animation_end1);

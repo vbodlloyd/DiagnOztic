@@ -46,19 +46,18 @@
             android:layout_height="fill_parent"
             android:layout_weight="1" >
 
-            <fragment
+             <fragment
                 android:id="@+id/map_frag"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                class="com.google.android.gms.maps.MapFragment" />
+                class="com.google.android.gms.maps.MapFragment" /> 
+<!--             <org.osmdroid.views.MapView
+                android:id="@+id/map_frag"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                > 
+            </org.osmdroid.views.MapView>-->
 
-            <!--
-                 <org.osmdroid.views.MapView
-                android:id="@+id/mapview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tilesource="Mapnik" />
-            -->
 
             <TextView
                 android:layout_width="wrap_content"

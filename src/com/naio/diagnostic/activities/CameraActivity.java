@@ -75,7 +75,7 @@ public class CameraActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		arrayPoints = new ArrayList<SimplePlane>();
 		// change the color of the action bar
 		/*
@@ -88,32 +88,32 @@ public class CameraActivity extends FragmentActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		//setContentView(R.layout.camera_activity);
+		// setContentView(R.layout.camera_activity);
 		// Create a OpenGL view.
-		//GLSurfaceView view = (GLSurfaceView) findViewById(R.id.opengl_view);
+		// GLSurfaceView view = (GLSurfaceView) findViewById(R.id.opengl_view);
 		GLSurfaceView view = new GLSurfaceView(this);
 
 		// Creating and attaching the renderer.
 		renderer = new OpenGLRenderer();
 		view.setRenderer(renderer);
-		 setContentView(view);
+		setContentView(view);
 
 		// Create a new plane.
 		plane = new SimplePlane(1, 1);
 		plane.sx = scaleX;
 		plane.sy = scaleY;
 		plane.z = 0.0f;
-		
+
 		rapScaleX = scaleX / 2.5f;
 		rapScaleY = scaleY / 2.5f;
-		
+
 		// Load the texture.
 		plane.loadBitmap(BitmapFactory.decodeResource(getResources(),
-						R.drawable.fleche));
+				R.drawable.fleche));
 
 		// Add the plane to the renderer.
 		renderer.addMesh(plane);
-				
+
 		getSupportFragmentManager().addOnBackStackChangedListener(
 				new OnBackStackChangedListener() {
 					public void onBackStackChanged() {
@@ -126,10 +126,12 @@ public class CameraActivity extends FragmentActivity {
 				});
 
 		if (savedInstanceState == null) {
-			/*nbrImage = 0;
-			odo_display = (TextView) findViewById(R.id.odo_text);
-			imageview = (ImageView) findViewById(R.id.imageview);
-			imageview_r = (ImageView) findViewById(R.id.imageview_r);*/
+			/*
+			 * nbrImage = 0; odo_display = (TextView)
+			 * findViewById(R.id.odo_text); imageview = (ImageView)
+			 * findViewById(R.id.imageview); imageview_r = (ImageView)
+			 * findViewById(R.id.imageview_r);
+			 */
 			/*
 			 * imageview.setOnClickListener(new OnClickListener() { boolean
 			 * fullsize = false;
@@ -198,7 +200,6 @@ public class CameraActivity extends FragmentActivity {
 	}
 
 	private void read_the_queue() {
-
 		display_image();
 		display_odo();
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
@@ -214,100 +215,111 @@ public class CameraActivity extends FragmentActivity {
 	}
 
 	private void display_image() {
-		for(int waz = 0; waz<2;waz++){
-			if(waz ==0){
-		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
-				.getPollAntepenultiemeFifo());
+		for (int waz = 0; waz < 2; waz++) {
+			if (waz == 0) {
+				LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
+						.getPollAntepenultiemeFifo());
 			}
-			if(waz ==1){
-		LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
-						.getPollFifo());	
+			if (waz == 1) {
+				LogTrame log = (LogTrame) trameDecoder.decode(memoryBufferLog
+						.getPollFifo());
 			}
-		byte[] data = DataManager.getInstance().getPollFifoImage();
-		if (data == null)
-			return;
-		Log.e("sizetwo",""+ data.length);
-		byte[] dataf = Arrays.copyOfRange(data,
-					Config.LENGHT_FULL_HEADER + 3, data.length-Config.LENGHT_CHECKSUM);
-		if(data[Config.LENGHT_FULL_HEADER+2] == 1){
-			Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
-			if (bm == null)
+			byte[] data = DataManager.getInstance().getPollFifoImage();
+			if (data == null)
 				return;
+			Log.e("sizetwo", "" + data.length);
+			byte[] dataf = Arrays.copyOfRange(data,
+					Config.LENGHT_FULL_HEADER + 3, data.length
+							- Config.LENGHT_CHECKSUM);
+			if (data[Config.LENGHT_FULL_HEADER + 2] == 1) {
+				Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0,
+						dataf.length);
+				if (bm == null)
+					return;
 
-			plane.loadBitmap(bm);
-		}else{//greyscale here
-			byte [] Bits = new byte[752*480*4]; //That's where the RGBA array goes.
-			Log.e("size", "++"+ dataf.length +"   and   " + 752*480);
-			int i;
-			for(i=0;i<dataf.length;i++)
-			{
-			    Bits[i*4] =
-			        Bits[i*4+1] =
-			        Bits[i*4+2] = (byte) dataf[i]; //Invert the source bits
-			    Bits[i*4+3] = -1;//0xff, that's the alpha.
+				plane.loadBitmap(bm);
+			} else {// greyscale here
+				byte[] Bits = new byte[752 * 480 * 4]; // That's where the RGBA
+														// array goes.
+				Log.e("size", "++" + dataf.length + "   and   " + 752 * 480);
+				int i;
+				for (i = 0; i < dataf.length; i++) {
+					Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i]; // Invert
+																						// the
+																						// source
+																						// bits
+					Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+				}
+
+				// Now put these nice RGBA pixels into a Bitmap object
+
+				Bitmap bm = Bitmap.createBitmap(752, 480,
+						Bitmap.Config.ARGB_8888);
+				bm.copyPixelsFromBuffer(ByteBuffer.wrap(Bits));
+				plane.loadBitmap(bm);
 			}
 
-			//Now put these nice RGBA pixels into a Bitmap object
+			/*
+			 * if (data[Config.LENGHT_FULL_HEADER + 1] == 0) {
+			 * imageview.setImageBitmap(bm); } else {
+			 * 
+			 * imageview_r.setImageBitmap(bm);
+			 * 
+			 * }
+			 */
+			ArrayList<float[]> dataPoints2d = DataManager.getInstance()
+					.getPollFifoPoints2D();
+			if (dataPoints2d == null)
+				return;
+			float w = dataPoints2d.get(0)[0];
+			float h = dataPoints2d.get(0)[1];
+			float xa = 0, ya = 0;
+			for (int i = 1; i < dataPoints2d.size(); i++) {
+				float x = dataPoints2d.get(i)[0];
+				float y = dataPoints2d.get(i)[1];
 
-			Bitmap bm = Bitmap.createBitmap(752, 480, Bitmap.Config.ARGB_8888);
-			bm.copyPixelsFromBuffer(ByteBuffer.wrap(Bits));
-			plane.loadBitmap(bm);
-		}
-
-			/*if (data[Config.LENGHT_FULL_HEADER + 1] == 0) {
-				imageview.setImageBitmap(bm);
-			} else {
-
-				imageview_r.setImageBitmap(bm);
-
-		}*/
-		ArrayList<float[]> dataPoints2d = DataManager.getInstance().getPollFifoPoints2D();
-		if(dataPoints2d == null)
-			return;
-		float w = dataPoints2d.get(0)[0];
-		float h = dataPoints2d.get(0)[1];
-		float xa=0,ya=0;
-		for( int i =1; i < dataPoints2d.size();i++){
-			float x = dataPoints2d.get(i)[0];
-			float y = dataPoints2d.get(i)[1];
-		
-			
-			if(arrayPoints.size() <= i-1 ){
-				SimplePlane dott = new SimplePlane(0.1f, 0.1f);
-				dott.z = 0.01f;
-				if(2*x/w -1>=0)
-					dott.x = 1.21f*rapScaleX*((2*(x+10)/w) - 1) ;
-				else
-					dott.x = 1.21f*rapScaleX*((2*(x-10)/w) - 1) ;
-				if(2*y/h -1>=0)
-					dott.y = 1.2f*rapScaleY*((2*(y+10)/h) - 1) ;
-				else
-					dott.y = 1.2f*rapScaleY*((2*(y-10)/h) - 1) ;
-				dott.sx = 0.0625f;
-				dott.sy = 0.0625f;
-				/*dot.sx = 1/10;
-				dot.sy = 1/10;*/
-				dott.loadBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.end_point));
-				arrayPoints.add(dott);
-				renderer.addMesh(dott);
-			}
-			else{
-				if(2*x/w -1>=0)
-					arrayPoints.get(i-1).x = 1.21f*rapScaleX*((2*(x+10)/w) - 1) ;
-				else
-					arrayPoints.get(i-1).x = 1.21f*rapScaleX*((2*(x-10)/w) - 1) ;
-				if(2*y/h -1>=0)
-					arrayPoints.get(i-1).y = 1.20f*rapScaleY*((2*(y+10)/h) - 1) ;
-				else
-					arrayPoints.get(i-1).y = 1.20f*rapScaleY*((2*(y-10)/h) - 1) ;
-			}
-			if(i-1 <= arrayPoints.size() && i==(dataPoints2d.size()-1) ){
-				int s = arrayPoints.size();
-				for (int j=(i-1) ; j < s ; j++){
-					arrayPoints.remove(j);
+				if (arrayPoints.size() <= i - 1) {
+					SimplePlane dott = new SimplePlane(0.1f, 0.1f);
+					dott.z = 0.01f;
+					if (2 * x / w - 1 >= 0)
+						dott.x = 1.21f * rapScaleX * ((2 * (x + 10) / w) - 1);
+					else
+						dott.x = 1.21f * rapScaleX * ((2 * (x - 10) / w) - 1);
+					if (2 * y / h - 1 >= 0)
+						dott.y = 1.2f * rapScaleY * ((2 * (y + 10) / h) - 1);
+					else
+						dott.y = 1.2f * rapScaleY * ((2 * (y - 10) / h) - 1);
+					dott.sx = 0.0625f;
+					dott.sy = 0.0625f;
+					/*
+					 * dot.sx = 1/10; dot.sy = 1/10;
+					 */
+					dott.loadBitmap(BitmapFactory.decodeResource(
+							getResources(), R.drawable.end_point));
+					arrayPoints.add(dott);
+					renderer.addMesh(dott);
+				} else {
+					if (2 * x / w - 1 >= 0)
+						arrayPoints.get(i - 1).x = 1.21f * rapScaleX
+								* ((2 * (x + 10) / w) - 1);
+					else
+						arrayPoints.get(i - 1).x = 1.21f * rapScaleX
+								* ((2 * (x - 10) / w) - 1);
+					if (2 * y / h - 1 >= 0)
+						arrayPoints.get(i - 1).y = 1.20f * rapScaleY
+								* ((2 * (y + 10) / h) - 1);
+					else
+						arrayPoints.get(i - 1).y = 1.20f * rapScaleY
+								* ((2 * (y - 10) / h) - 1);
+				}
+				if (i - 1 <= arrayPoints.size()
+						&& i == (dataPoints2d.size() - 1)) {
+					int s = arrayPoints.size();
+					for (int j = (i - 1); j < s; j++) {
+						arrayPoints.remove(j);
+					}
 				}
 			}
-		}
 		}
 	}
 

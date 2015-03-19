@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.IRegisterReceiver;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.modules.GEMFFileArchive;
@@ -16,8 +17,12 @@ import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
 import org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck;
 import org.osmdroid.tileprovider.modules.TileWriter;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.ResourceProxy;
 import org.osmdroid.views.MapView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -140,7 +145,17 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					.commit();
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map_frag)).getMap();
-
+//			maporg = (MapView) findViewById(R.id.map_frag);
+//			maporg.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+//			maporg.setBuiltInZoomControls(true);
+//		    maporg.setMultiTouchControls(true);
+//		    MapBoxTileSource.retrieveMapBoxMapId(this);
+//		    OnlineTileSourceBase MAPBOXSATELLITELABELLED = new MapBoxTileSource("MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1, 19, 256, ".png");
+//		    TileSourceFactory.addTileSource(MAPBOXSATELLITELABELLED);
+//		    maporg.setTileSource(MAPBOXSATELLITELABELLED);
+//		    IMapController mapController = maporg.getController();
+//		    mapController.setZoom(9);
+		
 			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 			
 			set_the_analogueView();
