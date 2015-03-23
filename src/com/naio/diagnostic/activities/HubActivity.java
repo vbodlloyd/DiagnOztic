@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 
 public class HubActivity extends Activity {
@@ -22,13 +23,9 @@ public class HubActivity extends Activity {
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.hub2_activity);
-		try {
-			Log.e("logav",DataManager.getInstance().getStringFromFile(this, "log.naio"));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		getWindow()
+		.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	
 	}
 
 	@Override

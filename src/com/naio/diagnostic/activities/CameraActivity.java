@@ -74,7 +74,7 @@ public class CameraActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		arrayPoints = new ArrayList<SimplePlane>();
 		// change the color of the action bar
@@ -85,8 +85,8 @@ public class CameraActivity extends FragmentActivity {
 		// Remove the title bar from the window.
 
 		// Make the windows into full screen mode.
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		// setContentView(R.layout.camera_activity);
 		// Create a OpenGL view.
@@ -98,6 +98,7 @@ public class CameraActivity extends FragmentActivity {
 		view.setRenderer(renderer);
 		setContentView(view);
 
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		// Create a new plane.
 		plane = new SimplePlane(1, 1);
 		plane.sx = scaleX;

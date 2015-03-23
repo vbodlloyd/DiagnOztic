@@ -1,6 +1,5 @@
 package com.naio.diagnostic.test;
 
-import java.nio.ByteBuffer;
 import java.util.Date;
 
 import com.naio.diagnostic.activities.HubActivity;
@@ -33,7 +32,6 @@ public class TrameTest extends ActivityInstrumentationTestCase2<HubActivity> {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-
 	}
 
 	public void testOdoTrame() {

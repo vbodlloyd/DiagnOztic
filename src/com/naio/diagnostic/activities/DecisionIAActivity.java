@@ -10,6 +10,7 @@ import com.naio.diagnostic.utils.NewMemoryBuffer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class DecisionIAActivity extends FragmentActivity {
@@ -28,7 +29,7 @@ public class DecisionIAActivity extends FragmentActivity {
 	private TextView odo_display;
 	private NewMemoryBuffer memoryBufferOdo;
 	private ReadSocketThread readSocketThreadOdo;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -36,6 +37,7 @@ public class DecisionIAActivity extends FragmentActivity {
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.decision_activity);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		memoryBufferOdo = new NewMemoryBuffer();
 		odo_display = (TextView) findViewById(R.id.text_odometrie);
 		trameDecoder = new TrameDecoder();
@@ -48,7 +50,7 @@ public class DecisionIAActivity extends FragmentActivity {
 
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
 	}
-	
+
 	private void read_the_queue() {
 		display_odo();
 		handler.postDelayed(runnable, MILLISECONDS_RUNNABLE);
@@ -62,12 +64,12 @@ public class DecisionIAActivity extends FragmentActivity {
 		}
 
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		overridePendingTransition(R.animator.animation_end2,
 				R.animator.animation_end1);
 	}
-	
+
 }

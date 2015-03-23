@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/google-play-services_lib"/>
 	<classpathentry exported="true" kind="lib" path="/home/bodereau/Téléchargements/osmdroid-android-4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/bodereau/Téléchargements/slf4j-android-1.6.1-RC1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/bodereau/Téléchargements/robotium-solo-5.3.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

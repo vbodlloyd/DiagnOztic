@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -38,6 +39,7 @@ public class BilanUtilisationActivity extends FragmentActivity {
 		getActionBar().setBackgroundDrawable(
 				getResources().getDrawable(R.drawable.form));
 		setContentView(R.layout.bilan_activity);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		readfile = "";
 		try {
 			readfile = DataManager.getInstance().getStringFromFile(this,
