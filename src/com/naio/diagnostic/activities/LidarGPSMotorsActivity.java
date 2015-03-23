@@ -58,6 +58,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -145,19 +146,21 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 					.commit();
 			map = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map_frag)).getMap();
-//			maporg = (MapView) findViewById(R.id.map_frag);
-//			maporg.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
-//			maporg.setBuiltInZoomControls(true);
-//		    maporg.setMultiTouchControls(true);
-//		    MapBoxTileSource.retrieveMapBoxMapId(this);
-//		    OnlineTileSourceBase MAPBOXSATELLITELABELLED = new MapBoxTileSource("MapBoxSatelliteLabelled", ResourceProxy.string.mapquest_aerial, 1, 19, 256, ".png");
-//		    TileSourceFactory.addTileSource(MAPBOXSATELLITELABELLED);
-//		    maporg.setTileSource(MAPBOXSATELLITELABELLED);
-//		    IMapController mapController = maporg.getController();
-//		    mapController.setZoom(9);
-		
+			// maporg = (MapView) findViewById(R.id.map_frag);
+			// maporg.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+			// maporg.setBuiltInZoomControls(true);
+			// maporg.setMultiTouchControls(true);
+			// MapBoxTileSource.retrieveMapBoxMapId(this);
+			// OnlineTileSourceBase MAPBOXSATELLITELABELLED = new
+			// MapBoxTileSource("MapBoxSatelliteLabelled",
+			// ResourceProxy.string.mapquest_aerial, 1, 19, 256, ".png");
+			// TileSourceFactory.addTileSource(MAPBOXSATELLITELABELLED);
+			// maporg.setTileSource(MAPBOXSATELLITELABELLED);
+			// IMapController mapController = maporg.getController();
+			// mapController.setZoom(9);
+
 			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-			
+
 			set_the_analogueView();
 			set_the_dpadView();
 			set_the_actuator_button();
@@ -260,134 +263,159 @@ public class LidarGPSMotorsActivity extends FragmentActivity {
 
 	private void set_the_analogueView() {
 		AnalogueView analView = (AnalogueView) findViewById(R.id.analogueView1);
+		int heightTab = getApplicationContext().getResources()
+				.getDisplayMetrics().heightPixels;
+		analView.setLayoutParams(new LayoutParams(heightTab / 3, heightTab / 3,
+				Gravity.CENTER));
+		analView.setRADIUS(heightTab / 12);
 		analView.setOnMoveListener(new MyMoveListenerForAnalogueView(
 				sendSocketThreadMotors));
 	}
 
 	private void set_the_dpadView() {
+		LinearLayout layoutdpad = (LinearLayout) findViewById(R.id.dpadview);
+		int heightTab = getApplicationContext().getResources()
+				.getDisplayMetrics().heightPixels;
+		layoutdpad.setLayoutParams(new LayoutParams((int) (heightTab / 2.8),
+				(int) (heightTab / 2.8), Gravity.CENTER));
 		ImageView dpaddown = (ImageView) findViewById(R.id.dpad_down);
 		ImageView dpadup = (ImageView) findViewById(R.id.dpad_up);
 		ImageView dpadleft = (ImageView) findViewById(R.id.dpad_left);
 		ImageView dpadright = (ImageView) findViewById(R.id.dpad_right);
 		dpaddown.setOnTouchListener(new View.OnTouchListener() {
 
-		    private Handler mHandler;
+			private Handler mHandler;
 
-		    @Override public boolean onTouch(View v, MotionEvent event) {
-		        switch(event.getAction()) {
-		        case MotionEvent.ACTION_DOWN:
-		            if (mHandler != null) return true;
-		            mHandler = new Handler();
-		            mHandler.postDelayed(mAction, 20);
-		            break;
-		        case MotionEvent.ACTION_UP:
-		            if (mHandler == null) return true;
-		            mHandler.removeCallbacks(mAction);
-		            mHandler = null;
-		            break;
-		        }
-		        return false;
-		    }
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 20);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
 
-		    Runnable mAction = new Runnable() {
-		        @Override public void run() {
-		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-							-127, -127, 0, 0, 0, 0 };
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
+							2, -127, -127, 0, 0, 0, 0 };
 					sendSocketThreadMotors.setBytes(b);
-		            mHandler.postDelayed(this, 20);
-		        }
-		    };
+					mHandler.postDelayed(this, 20);
+				}
+			};
 		});
-
 
 		dpadup.setOnTouchListener(new View.OnTouchListener() {
 
-		    private Handler mHandler;
+			private Handler mHandler;
 
-		    @Override public boolean onTouch(View v, MotionEvent event) {
-		        switch(event.getAction()) {
-		        case MotionEvent.ACTION_DOWN:
-		            if (mHandler != null) return true;
-		            mHandler = new Handler();
-		            mHandler.postDelayed(mAction, 20);
-		            break;
-		        case MotionEvent.ACTION_UP:
-		            if (mHandler == null) return true;
-		            mHandler.removeCallbacks(mAction);
-		            mHandler = null;
-		            break;
-		        }
-		        return false;
-		    }
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 20);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
 
-		    Runnable mAction = new Runnable() {
-		        @Override public void run() {
-		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-							127, 127, 0, 0, 0, 0 };
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
+							2, 127, 127, 0, 0, 0, 0 };
 					sendSocketThreadMotors.setBytes(b);
-		            mHandler.postDelayed(this, 20);
-		        }
-		    };
+					mHandler.postDelayed(this, 20);
+				}
+			};
 		});
 
 		dpadleft.setOnTouchListener(new View.OnTouchListener() {
 
-		    private Handler mHandler;
+			private Handler mHandler;
 
-		    @Override public boolean onTouch(View v, MotionEvent event) {
-		        switch(event.getAction()) {
-		        case MotionEvent.ACTION_DOWN:
-		            if (mHandler != null) return true;
-		            mHandler = new Handler();
-		            mHandler.postDelayed(mAction, 20);
-		            break;
-		        case MotionEvent.ACTION_UP:
-		            if (mHandler == null) return true;
-		            mHandler.removeCallbacks(mAction);
-		            mHandler = null;
-		            break;
-		        }
-		        return false;
-		    }
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 20);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
 
-		    Runnable mAction = new Runnable() {
-		        @Override public void run() {
-		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-							-127, 127, 0, 0, 0, 0 };
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
+							2, -127, 127, 0, 0, 0, 0 };
 					sendSocketThreadMotors.setBytes(b);
-		            mHandler.postDelayed(this, 20);
-		        }
-		    };
+					mHandler.postDelayed(this, 20);
+				}
+			};
 		});
 
 		dpadright.setOnTouchListener(new View.OnTouchListener() {
 
-		    private Handler mHandler;
+			private Handler mHandler;
 
-		    @Override public boolean onTouch(View v, MotionEvent event) {
-		        switch(event.getAction()) {
-		        case MotionEvent.ACTION_DOWN:
-		            if (mHandler != null) return true;
-		            mHandler = new Handler();
-		            mHandler.postDelayed(mAction, 20);
-		            break;
-		        case MotionEvent.ACTION_UP:
-		            if (mHandler == null) return true;
-		            mHandler.removeCallbacks(mAction);
-		            mHandler = null;
-		            break;
-		        }
-		        return false;
-		    }
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (mHandler != null)
+						return true;
+					mHandler = new Handler();
+					mHandler.postDelayed(mAction, 20);
+					break;
+				case MotionEvent.ACTION_UP:
+					if (mHandler == null)
+						return true;
+					mHandler.removeCallbacks(mAction);
+					mHandler = null;
+					break;
+				}
+				return false;
+			}
 
-		    Runnable mAction = new Runnable() {
-		        @Override public void run() {
-		        	byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0, 2,
-							127, -127, 0, 0, 0, 0 };
+			Runnable mAction = new Runnable() {
+				@Override
+				public void run() {
+					byte[] b = new byte[] { 78, 65, 73, 79, 48, 49, 1, 0, 0, 0,
+							2, 127, -127, 0, 0, 0, 0 };
 					sendSocketThreadMotors.setBytes(b);
-		            mHandler.postDelayed(this, 20);
-		        }
-		    };
+					mHandler.postDelayed(this, 20);
+				}
+			};
 		});
 
 	}

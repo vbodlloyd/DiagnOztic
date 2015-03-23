@@ -16,7 +16,7 @@ public class AnalogueView extends View {
     float x,y;
     double r,t;
     int cx, cy,w,h;
-    final int RADIUS = 100;
+    int RADIUS = 100;//width = height >   =width/4
     Paint black = new Paint();
     Paint grey = new Paint();
     Paint white = new Paint();
@@ -34,6 +34,10 @@ public class AnalogueView extends View {
         white.setFlags(Paint.ANTI_ALIAS_FLAG);
         grey.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
+    
+    public void setRADIUS(int rADIUS) {
+		RADIUS = rADIUS;
+	}
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         this.w = w;
@@ -150,10 +154,11 @@ public class AnalogueView extends View {
         t = n2pT(e.getX(),e.getY());
         x = (float) p2nX();
         y =(float) p2nY();
-        float xb=(x/2)-100;
-        float yb=(y/2)-100;
-        xb *=2.5;
-        yb *=-2.5;
+        float xb=(x/2)-RADIUS;
+        float yb=(y/2)-RADIUS;
+        float factor = 126/(RADIUS/2) ;
+        xb *= factor;
+        yb *= -1* factor;
         
         
         if(moveListener != null)

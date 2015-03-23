@@ -2,6 +2,8 @@ package com.naio.diagnostic.trames;
 
 import java.nio.ByteBuffer;
 
+import android.util.Log;
+
 import com.naio.diagnostic.utils.Config;
 
 public class GyroTrame extends Trame {
@@ -22,10 +24,9 @@ public class GyroTrame extends Trame {
 
 	public String show() {
 		if (instantiate) {
-
-			return "x:" + ByteBuffer.wrap(gyro_x).getChar(0) + "___y:"
-					+ ByteBuffer.wrap(gyro_y).getChar(0) + "___z:"
-					+ ByteBuffer.wrap(gyro_z).getChar(0);
+			return "x:" + String.valueOf(ByteBuffer.wrap(gyro_x).getShort(0)) + "___y:"
+					+ String.valueOf(ByteBuffer.wrap(gyro_y).getShort(0)) + "___z:"
+					+ String.valueOf(ByteBuffer.wrap(gyro_z).getShort(0));
 		}
 		return null;
 	}

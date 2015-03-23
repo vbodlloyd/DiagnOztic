@@ -112,7 +112,6 @@ public class LogTrame extends Trame {
 				}
 			}
 		}
-		Log.e("type",""+ type);
 	}
 
 	public float[] getPoint2D() {
