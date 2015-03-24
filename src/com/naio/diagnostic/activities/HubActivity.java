@@ -1,12 +1,10 @@
 package com.naio.diagnostic.activities;
 
 import com.naio.diagnostic.R;
-import com.naio.diagnostic.utils.DataManager;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
@@ -14,8 +12,6 @@ import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 
 public class HubActivity extends Activity {
-	
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

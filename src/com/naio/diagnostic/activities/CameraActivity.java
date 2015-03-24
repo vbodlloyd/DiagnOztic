@@ -13,14 +13,12 @@ import com.naio.diagnostic.trames.OdoTrame;
 import com.naio.diagnostic.trames.TrameDecoder;
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
-import com.naio.diagnostic.utils.MemoryBuffer;
 import com.naio.diagnostic.utils.NewMemoryBuffer;
 import com.naio.opengl.OpenGLRenderer;
 import com.naio.opengl.SimplePlane;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,15 +27,9 @@ import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 public class CameraActivity extends FragmentActivity {
