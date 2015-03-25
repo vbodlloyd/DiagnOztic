@@ -5,4 +5,20 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <!-- HUB ACTIVITY -->
+    <string name="hub_go_to_bilan">Bilan utilisation</string>
+    <string name="hub_go_to_decision">Decision IA</string>
+    <string name="hub_go_to_lidar">Lidar - Gps -Control</string>
+    <string name="hub_go_to_cameras">Cameras</string>
+
+    <!-- LIDAR GPS CONTROL ACTIVITY -->
+    <string name="lidar_lidar_title">Lidar Oz</string>
+    <string name="lidar_gps_title">Position Oz</string>
+    <string name="lidar_gps_altitude">Altitude:</string>
+    <string name="lidar_gps_vitesse">Vitesse:</string>
+    <string name="lidar_control_title">Contrôleur Oz</string>
+    <string name="lidar_button_change_pad">C</string>
+    <string name="lidar_button_actuator_up">^</string>
+    <string name="lidar_button_actuator_down">v</string>
+
 </resources>

@@ -76,7 +76,10 @@
             android:value="AIzaSyBALS6r9dqKzBwTGVFrTw4Ul9GxWEE439M" />
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="6587000" />
+            android:value="7095000" />
+        <meta-data
+            android:name="BING_KEY"
+            android:value="AgE0qZYVDft7M0LkvJwNRt4vunN7maqhWzS81AmlM6Jq7JxmjxIko905Cz4X8cxA" />
         <!-- <meta-data android:name="MAPBOX_MAPID" android:value="vbod.lggh6oln" /> -->
     </application>
 

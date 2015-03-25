@@ -33,9 +33,10 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="40dp"
                 android:background="@drawable/selector_textview_background_hub"
-                android:text="Bilan utilisation"
+                android:text="@string/hub_go_to_bilan"
                 android:textColor="@color/selector_textview_hub"
-                android:textSize="40dp" />
+                android:textSize="40dp"
+                 />
         </FrameLayout>
 
         <FrameLayout
@@ -59,7 +60,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="40dp"
                 android:background="@drawable/selector_textview_background_hub"
-                android:text="Decision IA"
+                android:text="@string/hub_go_to_decision"
                 android:textColor="@color/selector_textview_hub"
                 android:textSize="40dp" />
         </FrameLayout>
@@ -91,7 +92,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="40dp"
                 android:background="@drawable/selector_textview_background_hub"
-                android:text="Lidar - Gps - Control"
+                android:text="@string/hub_go_to_lidar"
                 android:textColor="@color/selector_textview_hub"
                 android:textSize="40dp" />
         </FrameLayout>
@@ -117,7 +118,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="40dp"
                 android:background="@drawable/selector_textview_background_hub"
-                android:text="Cameras"
+                android:text="@string/hub_go_to_cameras"
                 android:textColor="@color/selector_textview_hub"
                 android:textSize="40dp" />
         </FrameLayout>

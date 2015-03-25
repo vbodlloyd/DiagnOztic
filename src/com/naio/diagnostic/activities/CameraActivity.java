@@ -220,11 +220,10 @@ public class CameraActivity extends FragmentActivity {
 			byte[] data = DataManager.getInstance().getPollFifoImage();
 			if (data == null)
 				return;
-			Log.e("sizetwo", "" + data.length);
 			byte[] dataf = Arrays.copyOfRange(data,
 					Config.LENGHT_FULL_HEADER + 3, data.length
 							- Config.LENGHT_CHECKSUM);
-			if (data[Config.LENGHT_FULL_HEADER + 2] == 1) {
+			if (data[Config.LENGHT_FULL_HEADER + 2 ] == 1) {
 				Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0,
 						dataf.length);
 				if (bm == null)
@@ -232,15 +231,80 @@ public class CameraActivity extends FragmentActivity {
 
 				plane.loadBitmap(bm);
 			} else {// greyscale here
-				byte[] Bits = new byte[752 * 480 * 4]; // That's where the RGBA
+				/*byte[] dataf2 = Arrays.copyOfRange(dataf,
+						6, dataf.length
+								- Config.LENGHT_CHECKSUM);*/
+				/*short width = ByteBuffer.wrap(new byte[]{dataf[1],dataf[0]}).getShort(0);
+				short height = ByteBuffer.wrap(new byte[]{dataf[3],dataf[2]}).getShort(0);*/
+				byte[] Bits = new byte[752 * 480 * 4 /*width*height*4*/]; // That's where the RGBA
 														// array goes.
-				Log.e("size", "++" + dataf.length + "   and   " + 752 * 480);
+			
+				/*if(dataf[4]== 0x1){//rgb
+				 	if(dataf[5] == 0x1){
+						int i;
+						int j=0;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = dataf[j++];
+							Bits[i * 4 + 1] = dataf[j++];
+							Bits[i * 4 + 2] = (byte) dataf[j++];
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					}else id(dataf[5] == 0x2){
+						int i;
+						int j=0;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
+							Bits[i * 4 + 1] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+3],dataf[j+2]}).getShort()/255);
+							Bits[i * 4 + 2] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+5],dataf[j+4]}).getShort()/255);
+							j+=6;
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					}
+				}else if(dataf[4]==0x2){//bgr
+					if(dataf[5] == 0x1){
+						int i;
+						int j=0;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = dataf[j+2];
+							Bits[i * 4 + 1] = dataf[j+1];
+							Bits[i * 4 + 2] = (byte) dataf[j];
+							j+=3;
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					}
+					}else id(dataf[5] == 0x2){
+						int i;
+						int j=0;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+5],dataf[j+4]}).getShort()/255);
+							Bits[i * 4 + 1] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+3],dataf[j+2]}).getShort()/255);
+							Bits[i * 4 + 2] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
+							j+=6;
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					}
+				}
+				}else if(dataf[4]==0x3){//grey
+					if(dataf[5] == 0x1){
+						int i;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i];
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					}else if(dataf[5] == 0x2){
+						int i;
+						int j=0;
+						for (i = 0; i < dataf.length; i++) {
+							Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) (ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
+							j+=2;
+							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
+						}
+					
+					}
+				}*/
 				int i;
 				for (i = 0; i < dataf.length; i++) {
-					Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i]; // Invert
-																						// the
-																						// source
-																						// bits
+					Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i]; 
 					Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
 				}
 
