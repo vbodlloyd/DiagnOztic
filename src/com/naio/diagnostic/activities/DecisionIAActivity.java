@@ -12,7 +12,11 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.WindowManager;
 import android.widget.TextView;
-
+/**
+ * Activity that display the captor state ( odo  ? gyro ? accel ? )
+ * @author bodereau
+ *
+ */
 public class DecisionIAActivity extends FragmentActivity {
 	private static final int MILLISECONDS_RUNNABLE = 64; // 64 for 15fps
 

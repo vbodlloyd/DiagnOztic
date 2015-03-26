@@ -14,24 +14,43 @@ import com.naio.diagnostic.trames.TrameDecoder;
 import com.naio.diagnostic.utils.Config;
 import com.naio.diagnostic.utils.DataManager;
 import com.naio.diagnostic.utils.NewMemoryBuffer;
+import com.naio.opengl.CircleMesh;
 import com.naio.opengl.OpenGLRenderer;
 import com.naio.opengl.SimplePlane;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.util.DisplayMetrics;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Activity that displays the camera of Oz send in the Log socket. It also
+ * displays points send in the same socket
+ * 
+ * @author bodereau
+ * 
+ */
 public class CameraActivity extends FragmentActivity {
 	private static final int MILLISECONDS_RUNNABLE = 64; // 64 for 15fps
 
@@ -53,7 +72,7 @@ public class CameraActivity extends FragmentActivity {
 	private NewMemoryBuffer memoryBufferOdo;
 	private ReadSocketThread readSocketThreadOdo;
 	private TextView odo_display;
-	private ArrayList<SimplePlane> arrayPoints = new ArrayList<SimplePlane>();
+	private ArrayList<float[]> arrayPoints = new ArrayList<float[]>();
 	private static float scaleX = 3.5f;
 	private static float scaleY = 2.5f;
 	private float rapScaleX;
@@ -63,12 +82,15 @@ public class CameraActivity extends FragmentActivity {
 
 	private OpenGLRenderer renderer;
 
+	private ArrayList<float[]> arrayPoints3d = new ArrayList<float[]>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		arrayPoints = new ArrayList<SimplePlane>();
+		arrayPoints = new ArrayList<float[]>();
+		arrayPoints3d = new ArrayList<float[]>();
 		// change the color of the action bar
 		/*
 		 * getActionBar().setBackgroundDrawable(
@@ -89,7 +111,122 @@ public class CameraActivity extends FragmentActivity {
 		renderer = new OpenGLRenderer();
 		view.setRenderer(renderer);
 		setContentView(view);
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		final float density = displayMetrics.density;
+		view.setOnTouchListener(new OnTouchListener() {
+			private float mPreviousX;
+			private float mPreviousY;
+			private float mDensity = density;
 
+			// These matrices will be used to move and zoom image
+			Matrix matrix = new Matrix();
+			Matrix savedMatrix = new Matrix();
+
+			// We can be in one of these 3 states
+			static final int NONE = 0;
+			static final int DRAG = 1;
+			static final int ZOOM = 2;
+			static final int DRAW = 3;
+			int mode = NONE;
+
+			// Remember some things for zooming
+			PointF start = new PointF();
+			PointF mid = new PointF();
+			float oldDist = 1f;
+
+			// Limit zoomable/pannable image
+			private float[] matrixValues = new float[9];
+			private float maxZoom;
+			private float minZoom;
+			private float height;
+			private float width;
+			private RectF viewRect;
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				if (event != null) {
+					float x = event.getX();
+					float y = event.getY();
+
+					/*
+					 * if (event.getAction() == MotionEvent.ACTION_MOVE) { if
+					 * (renderer != null) { float deltaY = (x - mPreviousX) /
+					 * mDensity / 2f; float deltaX = (y - mPreviousY) / mDensity
+					 * / 2f;
+					 * 
+					 * renderer.mDeltaX += deltaX; renderer.mDeltaY += deltaY; }
+					 * }
+					 */
+
+					switch (event.getAction() & MotionEvent.ACTION_MASK) {
+					case MotionEvent.ACTION_DOWN:
+						start.set(event.getX(), event.getY());
+						mode = DRAG;
+						break;
+					case MotionEvent.ACTION_POINTER_DOWN:
+						oldDist = spacing(event);
+						if (oldDist > 10f) {
+							midPoint(mid, event);
+							mode = ZOOM;
+						}
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_POINTER_UP:
+						mode = NONE;
+
+						break;
+					case MotionEvent.ACTION_MOVE:
+						if (mode == DRAW) {
+							onTouchEvent(event);
+						}
+						if (mode == DRAG) {
+							if (renderer != null) {
+								float deltaY = (x - mPreviousX) / mDensity / 2f;
+								float deltaX = (y - mPreviousY) / mDensity / 2f;
+
+								renderer.mDeltaX += deltaX;
+								renderer.mDeltaY += deltaY;
+							}
+						} else if (mode == ZOOM) {
+							float newDist = spacing(event);
+							Log.e("agabddb", "--" + newDist);
+							if (newDist > 10f) {
+								float scale = newDist / oldDist;
+								Log.e("agabb", "--" + scale);
+								renderer.scale += (scale - 1) / 10;
+								if (renderer.scale >= 3.8f) {
+									renderer.scale = 3.8f;
+								}
+							}
+
+						}
+						break;
+					}
+					mPreviousX = x;
+					mPreviousY = y;
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			// *******************Determine the space between the first two
+			// fingers
+			private float spacing(MotionEvent event) {
+				float x = event.getX(0) - event.getX(1);
+				float y = event.getY(0) - event.getY(1);
+				return FloatMath.sqrt(x * x + y * y);
+			}
+
+			// ************* Calculate the mid point of the first two fingers
+			private void midPoint(PointF point, MotionEvent event) {
+				float x = event.getX(0) + event.getX(1);
+				float y = event.getY(0) + event.getY(1);
+				point.set(x / 2, y / 2);
+			}
+		});
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		// Create a new plane.
 		plane = new SimplePlane(1, 1);
@@ -106,7 +243,6 @@ public class CameraActivity extends FragmentActivity {
 
 		// Add the plane to the renderer.
 		renderer.addMesh(plane);
-
 		getSupportFragmentManager().addOnBackStackChangedListener(
 				new OnBackStackChangedListener() {
 					public void onBackStackChanged() {
@@ -223,97 +359,40 @@ public class CameraActivity extends FragmentActivity {
 			byte[] dataf = Arrays.copyOfRange(data,
 					Config.LENGHT_FULL_HEADER + 3, data.length
 							- Config.LENGHT_CHECKSUM);
-			if (data[Config.LENGHT_FULL_HEADER + 2 ] == 1) {
-				Bitmap bm = BitmapFactory.decodeByteArray(dataf, 0,
-						dataf.length);
+			Bitmap bm;
+			if (data[Config.LENGHT_FULL_HEADER + 2] == 1) {
+				bm = BitmapFactory.decodeByteArray(dataf, 0, dataf.length);
 				if (bm == null)
 					return;
 
 				plane.loadBitmap(bm);
 			} else {// greyscale here
-				/*byte[] dataf2 = Arrays.copyOfRange(dataf,
-						6, dataf.length
-								- Config.LENGHT_CHECKSUM);*/
-				/*short width = ByteBuffer.wrap(new byte[]{dataf[1],dataf[0]}).getShort(0);
-				short height = ByteBuffer.wrap(new byte[]{dataf[3],dataf[2]}).getShort(0);*/
-				byte[] Bits = new byte[752 * 480 * 4 /*width*height*4*/]; // That's where the RGBA
-														// array goes.
-			
-				/*if(dataf[4]== 0x1){//rgb
-				 	if(dataf[5] == 0x1){
-						int i;
-						int j=0;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = dataf[j++];
-							Bits[i * 4 + 1] = dataf[j++];
-							Bits[i * 4 + 2] = (byte) dataf[j++];
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					}else id(dataf[5] == 0x2){
-						int i;
-						int j=0;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
-							Bits[i * 4 + 1] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+3],dataf[j+2]}).getShort()/255);
-							Bits[i * 4 + 2] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+5],dataf[j+4]}).getShort()/255);
-							j+=6;
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					}
-				}else if(dataf[4]==0x2){//bgr
-					if(dataf[5] == 0x1){
-						int i;
-						int j=0;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = dataf[j+2];
-							Bits[i * 4 + 1] = dataf[j+1];
-							Bits[i * 4 + 2] = (byte) dataf[j];
-							j+=3;
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					}
-					}else id(dataf[5] == 0x2){
-						int i;
-						int j=0;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+5],dataf[j+4]}).getShort()/255);
-							Bits[i * 4 + 1] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+3],dataf[j+2]}).getShort()/255);
-							Bits[i * 4 + 2] = (byte)(ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
-							j+=6;
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					}
-				}
-				}else if(dataf[4]==0x3){//grey
-					if(dataf[5] == 0x1){
-						int i;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i];
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					}else if(dataf[5] == 0x2){
-						int i;
-						int j=0;
-						for (i = 0; i < dataf.length; i++) {
-							Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) (ByteBuffer.wrap(new byte[]{dataf[j+1],dataf[j]}).getShort()/255);
-							j+=2;
-							Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
-						}
-					
-					}
-				}*/
+				/*
+				 * byte[] dataf2 = Arrays.copyOfRange(dataf, 6, dataf.length -
+				 * Config.LENGHT_CHECKSUM);
+				 */
+				/*
+				 * short width = ByteBuffer.wrap(new
+				 * byte[]{dataf[1],dataf[0]}).getShort(0); short height =
+				 * ByteBuffer.wrap(new byte[]{dataf[3],dataf[2]}).getShort(0);
+				 */
+				byte[] Bits = new byte[752 * 480 * 4 /* width*height*4 */]; // That's
+																			// where
+																			// the
+																			// RGBA
+				// array goes.
+
 				int i;
 				for (i = 0; i < dataf.length; i++) {
-					Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i]; 
+					Bits[i * 4] = Bits[i * 4 + 1] = Bits[i * 4 + 2] = (byte) dataf[i];
 					Bits[i * 4 + 3] = -1;// 0xff, that's the alpha.
 				}
 
 				// Now put these nice RGBA pixels into a Bitmap object
 
-				Bitmap bm = Bitmap.createBitmap(752, 480,
-						Bitmap.Config.ARGB_8888);
+				bm = Bitmap.createBitmap(752, 480, Bitmap.Config.ARGB_8888);
 				bm.copyPixelsFromBuffer(ByteBuffer.wrap(Bits));
-				plane.loadBitmap(bm);
+
 			}
 
 			/*
@@ -326,57 +405,83 @@ public class CameraActivity extends FragmentActivity {
 			 */
 			ArrayList<float[]> dataPoints2d = DataManager.getInstance()
 					.getPollFifoPoints2D();
-			if (dataPoints2d == null)
+			ArrayList<float[]> dataPoints3d = DataManager.getInstance()
+					.getPollFifoPoints3D();
+			if (dataPoints2d == null && dataPoints3d == null) {
+				plane.loadBitmap(bm);
 				return;
-			float w = dataPoints2d.get(0)[0];
-			float h = dataPoints2d.get(0)[1];
-			float xa = 0, ya = 0;
-			for (int i = 1; i < dataPoints2d.size(); i++) {
-				float x = dataPoints2d.get(i)[0];
-				float y = dataPoints2d.get(i)[1];
+			}
+			if (dataPoints3d == null) {
+				float w = dataPoints2d.get(0)[0];
+				float h = dataPoints2d.get(0)[1];
+				float xa = 0, ya = 0;
 
-				if (arrayPoints.size() <= i - 1) {
-					SimplePlane dott = new SimplePlane(0.1f, 0.1f);
-					dott.z = 0.01f;
-					if (2 * x / w - 1 >= 0)
-						dott.x = 1.21f * rapScaleX * ((2 * (x + 10) / w) - 1);
-					else
-						dott.x = 1.21f * rapScaleX * ((2 * (x - 10) / w) - 1);
-					if (2 * y / h - 1 >= 0)
-						dott.y = 1.2f * rapScaleY * ((2 * (y + 10) / h) - 1);
-					else
-						dott.y = 1.2f * rapScaleY * ((2 * (y - 10) / h) - 1);
-					dott.sx = 0.0625f;
-					dott.sy = 0.0625f;
-					/*
-					 * dot.sx = 1/10; dot.sy = 1/10;
-					 */
-					dott.loadBitmap(BitmapFactory.decodeResource(
-							getResources(), R.drawable.end_point));
-					arrayPoints.add(dott);
-					renderer.addMesh(dott);
-				} else {
-					if (2 * x / w - 1 >= 0)
-						arrayPoints.get(i - 1).x = 1.21f * rapScaleX
-								* ((2 * (x + 10) / w) - 1);
-					else
-						arrayPoints.get(i - 1).x = 1.21f * rapScaleX
-								* ((2 * (x - 10) / w) - 1);
-					if (2 * y / h - 1 >= 0)
-						arrayPoints.get(i - 1).y = 1.20f * rapScaleY
-								* ((2 * (y + 10) / h) - 1);
-					else
-						arrayPoints.get(i - 1).y = 1.20f * rapScaleY
-								* ((2 * (y - 10) / h) - 1);
+				for (int i = 1; i < dataPoints2d.size(); i++) {
+					float x = dataPoints2d.get(i)[0];
+					float y = dataPoints2d.get(i)[1];
+					Canvas canvas = new Canvas(bm);
+					Paint paint = new Paint();
+					paint.setAntiAlias(true);
+					paint.setColor(Color.BLUE);
+					canvas.drawCircle(x - 1, y - 1, 6, paint);
+
+					if (arrayPoints.size() <= i - 1) {
+						arrayPoints.add(new float[] { x, y });
+					} else {
+						arrayPoints.get(i - 1)[0] = x;
+						arrayPoints.get(i - 1)[1] = y;
+					}
+					if (i - 1 <= arrayPoints.size()
+							&& i == (dataPoints2d.size() - 1)) {
+						int s = arrayPoints.size();
+						for (int j = (i - 1); j < s; j++) {
+							arrayPoints.remove(j);
+						}
+					}
 				}
-				if (i - 1 <= arrayPoints.size()
-						&& i == (dataPoints2d.size() - 1)) {
-					int s = arrayPoints.size();
-					for (int j = (i - 1); j < s; j++) {
-						arrayPoints.remove(j);
+			} else // points 3d
+			{
+				float w = dataPoints3d.get(0)[0];
+				float h = dataPoints3d.get(0)[1];
+				float d = dataPoints3d.get(0)[2];
+				float xa = 0, ya = 0;
+
+				for (int i = 1; i < dataPoints3d.size(); i++) {
+					float x = dataPoints3d.get(i)[0];
+					float y = dataPoints3d.get(i)[1];
+					float z = dataPoints3d.get(i)[2];
+					Canvas canvas = new Canvas(bm);
+					Paint paint = new Paint();
+					paint.setAntiAlias(true);
+					Log.e("zpoint", x+"--"+y+"--" + z);
+					if (z <= 0)
+						paint.setColor(Color.BLUE);
+					if (z <= -1)
+						paint.setColor(Color.GREEN);
+					if (z <= -2)
+						paint.setColor(Color.YELLOW);
+					if (z >= 1)
+						paint.setColor(Color.RED);
+					if (z >= 2)
+						paint.setColor(Color.WHITE);
+					canvas.drawCircle(x - 1, y - 1, 6, paint);
+
+					if (arrayPoints3d.size() <= i - 1) {
+						arrayPoints3d.add(new float[] { x, y });
+					} else {
+						arrayPoints3d.get(i - 1)[0] = x;
+						arrayPoints3d.get(i - 1)[1] = y;
+					}
+					if (i - 1 <= arrayPoints3d.size()
+							&& i == (dataPoints3d.size() - 1)) {
+						int s = arrayPoints3d.size();
+						for (int j = (i - 1); j < s; j++) {
+							arrayPoints3d.remove(j);
+						}
 					}
 				}
 			}
+			plane.loadBitmap(bm);
 		}
 	}
 

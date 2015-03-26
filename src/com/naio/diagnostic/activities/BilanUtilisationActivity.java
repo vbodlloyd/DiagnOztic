@@ -25,6 +25,15 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+/**
+ * 
+ * Activity that display the statistics of the robot. TODO : add times running (
+ * total ), time running by session, kilometers traveled ( total ), kilometers
+ * traveled by session, path map by session
+ * 
+ * @author bodereau
+ * 
+ */
 public class BilanUtilisationActivity extends FragmentActivity {
 
 	private GoogleMap map;

@@ -34,11 +34,6 @@
         android:icon="@drawable/logo_diagnostic"
         android:theme="@style/AppTheme" >
         <uses-library android:name="android.test.runner" />
-
-        <activity
-            android:name="com.naio.diagnostic.activities.OpenGLES20Activity"
-            android:screenOrientation="landscape" >
-        </activity>
         <activity
             android:name="com.naio.diagnostic.activities.LidarGPSMotorsActivity"
             android:screenOrientation="landscape" >
@@ -56,11 +51,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.naio.diagnostic.activities.GoogleMapV2Activity"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="com.naio.diagnostic.activities.BilanUtilisationActivity"

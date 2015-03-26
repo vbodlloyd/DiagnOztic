@@ -5,9 +5,21 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
+import android.opengl.Matrix;
 
 public class OpenGLRenderer implements Renderer {
 	private final Group root;
+	
+	/** Store the accumulated rotation. */
+	private final float[] mAccumulatedRotation = new float[16];
+	 
+	/** Store the current rotation. */
+	private final float[] mCurrentRotation = new float[16];
+	public float mDeltaX=0.0f;
+	public float mDeltaY=0.0f;
+
+	public float scale=0.0f;
+	public float oldscale=0.0f;
 
 	public OpenGLRenderer() {
 		// Initialize our root.
@@ -24,7 +36,7 @@ public class OpenGLRenderer implements Renderer {
 	 */
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		// Set the background color to black ( rgba ).
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 0.5f);
 		// Enable Smooth Shading, default not really needed.
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		// Depth buffer setup.
@@ -35,6 +47,8 @@ public class OpenGLRenderer implements Renderer {
 		gl.glDepthFunc(GL10.GL_LEQUAL);
 		// Really nice perspective calculations.
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+		  // Initialize the accumulated rotation matrix
+	     Matrix.setIdentityM(mAccumulatedRotation, 0);
 	}
 
 	/*
@@ -51,6 +65,10 @@ public class OpenGLRenderer implements Renderer {
 		gl.glLoadIdentity();
 		// Translates 4 units into the screen.
 		gl.glTranslatef(0, 0, -4);
+		gl.glTranslatef(0.0f, 0.0f, scale);
+		gl.glRotatef(mDeltaX, 1.0f, 0.0f, 0.0f);
+		gl.glRotatef(mDeltaY, 0.0f, 1.0f, 0.0f);
+		oldscale = scale;
 		// Draw our scene.
 		root.draw(gl);
 

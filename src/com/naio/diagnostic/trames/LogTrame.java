@@ -34,6 +34,10 @@ public class LogTrame extends Trame {
 	private final Object lock = new Object();
 	private ArrayList<float[][]> arrayListPoint = new ArrayList<float[][]>();
 	private ArrayList<float[]> arrayListPoints2D = new ArrayList<float[]>();
+	private ArrayList<float[]> arrayListPoints3D = new ArrayList<float[]>();
+	private byte[] points3d_y = new byte[4];
+	private byte[] points3d_z = new byte[4];
+	private byte[] points3d_x = new byte[4];
 
 	public LogTrame(byte[] data) {
 		super(data);
@@ -112,6 +116,55 @@ public class LogTrame extends Trame {
 				}
 			}
 		}
+		else if(type == TYPE_POINTS3D_CAMERA){
+			synchronized (lock) {
+				Log.e("h and w",""+ data.length + " visé : " +(data[Config.LENGHT_FULL_HEADER + 1]
+						* Config.POINTS3D_SIZE_IN_BYTES
+						+ Config.LENGHT_FULL_HEADER + Config.ID_BYTES_FOR_LOG
+						+ Config.BYTES_SIZE_W_H_D + Config.LENGHT_CHECKSUM) );
+				if (data.length == (data[Config.LENGHT_FULL_HEADER + 1]
+						* Config.POINTS3D_SIZE_IN_BYTES
+						+ Config.LENGHT_FULL_HEADER + Config.ID_BYTES_FOR_LOG
+						+ Config.BYTES_SIZE_W_H_D + Config.LENGHT_CHECKSUM)-1) {
+					byte[] width = new byte[] { data[offset], data[offset+1] };
+					byte[] height = new byte[] { data[offset + 2],
+							data[offset + 3] };
+					byte[] depth = new byte[] { data[offset + 4],
+							data[offset + 5] };
+					offset += 6;
+					float[] dim = new float[3];
+					dim[0] = (float) ByteBuffer.wrap(width).getChar(0);
+					dim[1] = (float) ByteBuffer.wrap(height).getChar(0);
+					dim[2] = (float) ByteBuffer.wrap(depth).getChar(0);
+					Log.e("h and w and d",""+ dim[0]+"---"+dim[1]+"---"+dim[2]);
+					arrayListPoints3D.add(dim);
+					for (int i = 0; i < data[Config.LENGHT_FULL_HEADER + 1]; i++) {
+						points3d_x = new byte[] { data[offset + 3],
+								data[offset + 2], data[offset + 1],
+								data[offset] };
+						points3d_y = new byte[] { data[offset + 7],
+								data[offset + 6], data[offset + 5],
+								data[offset + 4] };
+						points3d_z = new byte[] { data[offset + 11],
+								data[offset + 10], data[offset + 9],
+								data[offset + 8] };
+						offset = offset + Config.POINTS3D_SIZE_IN_BYTES;
+						arrayListPoints3D.add(getPoint3D());
+					}
+					DataManager.getInstance().fifoPoints3D
+							.offer(arrayListPoints3D);
+				
+				}
+			}
+		}
+	}
+
+	private float[] getPoint3D() {
+		float[] points = new float[3];
+		points[0] = ByteBuffer.wrap(points3d_x).getFloat(0);
+		points[1] = ByteBuffer.wrap(points3d_y).getFloat(0);
+		points[2] = ByteBuffer.wrap(points3d_z).getFloat(0);
+		return points;
 	}
 
 	public float[] getPoint2D() {

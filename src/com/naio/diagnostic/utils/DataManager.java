@@ -24,6 +24,7 @@ public class DataManager {
 	//the first float[] contains the width and the height of the images
 	public ConcurrentLinkedQueue<ArrayList<float[]>> fifoPoints2D = new ConcurrentLinkedQueue<ArrayList<float[]>>() ;
 	private SimpleDateFormat sdf;
+	public ConcurrentLinkedQueue<ArrayList<float[]>> fifoPoints3D = new ConcurrentLinkedQueue<ArrayList<float[]>>() ;
 
 	private static DataManager instance;
 	
@@ -44,6 +45,7 @@ public class DataManager {
 		fifoImage = new ConcurrentLinkedQueue<byte[]>();
 		fifoLines = new ConcurrentLinkedQueue<ArrayList<float[][]>>();
 		fifoPoints2D = new ConcurrentLinkedQueue<ArrayList<float[]>>();
+		fifoPoints3D = new ConcurrentLinkedQueue<ArrayList<float[]>>();
 	}
 	
 	public void write_in_file(Context ctx) {
@@ -162,5 +164,12 @@ public class DataManager {
 			fifoPoints2D.poll();
 		}
 		return fifoPoints2D.peek();
+	}
+	
+	public ArrayList<float[]> getPollFifoPoints3D() {
+		for(int i=0; i< fifoPoints3D.size() -1 ; i++){
+			fifoPoints3D.poll();
+		}
+		return fifoPoints3D.peek();
 	}
 }

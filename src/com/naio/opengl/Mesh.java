@@ -43,7 +43,7 @@ public class Mesh {
 	private final float[] mRGBA = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	// Smooth Colors
-	private FloatBuffer mColorBuffer = null;
+	public FloatBuffer mColorBuffer = null;
 
 	// Translate params.
 	public float x = 0;
@@ -132,9 +132,8 @@ public class Mesh {
 		gl.glRotatef(-rz, 0, 0, 1);
 		gl.glTranslatef(-x,- y, -z);
 		
-		
 		// Disable face culling.
-		gl.glDisable(GL10.GL_CULL_FACE);
+		gl.glEnable(GL10.GL_CULL_FACE);
 	}
 
 	/**

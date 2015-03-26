@@ -114,7 +114,7 @@ public class NewMemoryBuffer {
 			maxPacketLenght = 2;
 			break;
 		case (byte) Config.ID_LOG:
-			maxPacketLenght = 360963;
+			maxPacketLenght = 500000000;
 			break;
 		case (byte) Config.ID_ODO:
 			maxPacketLenght = 4;

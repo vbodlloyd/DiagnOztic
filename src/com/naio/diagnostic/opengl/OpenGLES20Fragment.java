@@ -24,22 +24,30 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+/**
+ * Fragment used in LidarGpsMotorsActivity to display the lidar
+ * 
+ * @author bodereau
+ * 
+ */
 public class OpenGLES20Fragment extends Fragment {
 
 	private GLSurfaceView mGLView;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        mGLView = new MyGLSurfaceView(this.getActivity()); 
-        return mGLView;
-    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		mGLView = new MyGLSurfaceView(this.getActivity());
+		return mGLView;
+	}
+
 	/**
 	 * @return the mGLView
 	 */
 	public GLSurfaceView getView() {
 		return mGLView;
 	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -59,5 +67,4 @@ public class OpenGLES20Fragment extends Fragment {
 		mGLView.onResume();
 	}
 
-	
 }
